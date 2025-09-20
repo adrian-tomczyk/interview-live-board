@@ -1,4 +1,4 @@
-package com.tomczyk.board;
+package com.tomczyk.board.livematches;
 
 import com.tomczyk.board.match.Match;
 import com.tomczyk.board.match.MatchEvent;

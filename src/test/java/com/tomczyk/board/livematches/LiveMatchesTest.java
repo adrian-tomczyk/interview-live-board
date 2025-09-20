@@ -1,4 +1,4 @@
-package com.tomczyk.board;
+package com.tomczyk.board.livematches;
 
 import com.tomczyk.board.match.Match;
 import com.tomczyk.board.match.MatchEvent;
@@ -271,5 +271,62 @@ public class LiveMatchesTest {
 
         //then
         assertEquals("MatchEventType mismatch - expected: [HOME_TEAM_SCORES, AWAY_TEAM_SCORES] got: MATCH_STARTED", exception.getMessage());
+    }
+
+    @Test
+    public void shouldOrderMatchesByHighestScoreSum() throws Exception {
+        //given
+        LiveMatches liveMatches = new LiveMatches();
+
+        MatchEvent matchStartEvent1 = new MatchEvent(MatchEventType.MATCH_STARTED, "Poland", "Uruguay");
+        MatchEvent matchStartEvent2 = new MatchEvent(MatchEventType.MATCH_STARTED, "Mexico", "Canada");
+        MatchEvent matchStartEvent3 = new MatchEvent(MatchEventType.MATCH_STARTED, "Germany", "France");
+        MatchEvent matchStartEvent4 = new MatchEvent(MatchEventType.MATCH_STARTED, "Argentina", "Australia");
+
+        liveMatches.addMatch(matchStartEvent1);
+        liveMatches.addMatch(matchStartEvent2);
+        liveMatches.addMatch(matchStartEvent3);
+        liveMatches.addMatch(matchStartEvent4);
+
+        MatchEvent matchHomeScoreEvent2 = new MatchEvent(MatchEventType.MATCH_STARTED, "Mexico", "Canada");
+        MatchEvent matchHomeScoreEvent4 = new MatchEvent(MatchEventType.MATCH_STARTED, "Argentina", "Australia");
+        MatchEvent matchAwayScoreEvent3 = new MatchEvent(MatchEventType.MATCH_STARTED, "Germany", "France");
+        MatchEvent matchAwayScoreEvent4 = new MatchEvent(MatchEventType.MATCH_STARTED, "Argentina", "Australia");
+
+        liveMatches.updateMatchScore(matchHomeScoreEvent2);
+        liveMatches.updateMatchScore(matchHomeScoreEvent2);
+        liveMatches.updateMatchScore(matchHomeScoreEvent2);
+
+        liveMatches.updateMatchScore(matchAwayScoreEvent3);
+        liveMatches.updateMatchScore(matchAwayScoreEvent3);
+        liveMatches.updateMatchScore(matchAwayScoreEvent3);
+        liveMatches.updateMatchScore(matchAwayScoreEvent3);
+
+        liveMatches.updateMatchScore(matchHomeScoreEvent4);
+        liveMatches.updateMatchScore(matchHomeScoreEvent4);
+        liveMatches.updateMatchScore(matchHomeScoreEvent4);
+        liveMatches.updateMatchScore(matchAwayScoreEvent4);
+        liveMatches.updateMatchScore(matchAwayScoreEvent4);
+        liveMatches.updateMatchScore(matchAwayScoreEvent4);
+
+        //when
+        Match match1 = liveMatches.getCurrentMatches().getFirst();
+        Match match2 = liveMatches.getCurrentMatches().get(1);
+        Match match3 = liveMatches.getCurrentMatches().get(2);
+        Match match4 = liveMatches.getCurrentMatches().get(3);
+
+
+        //then
+        assertEquals("Argentina", match1.getHomeName());
+        assertEquals("Australia", match1.getAwayName());
+
+        assertEquals("Germany", match2.getHomeName());
+        assertEquals("France", match2.getAwayName());
+
+        assertEquals("Mexico", match3.getHomeName());
+        assertEquals("Canada", match3.getAwayName());
+
+        assertEquals("Poland", match4.getHomeName());
+        assertEquals("Uruguay", match4.getAwayName());
     }
 }
