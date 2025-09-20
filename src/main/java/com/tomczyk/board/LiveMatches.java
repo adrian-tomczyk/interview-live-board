@@ -30,4 +30,13 @@ public class LiveMatches {
     }
 
 
+    public void finishMatch(String home, String away) throws Exception {
+        Match match = getMatch(home, away);
+
+        if (match == null) {
+            throw new Exception("Match does not exists");
+        }
+
+        matches.remove(match);
+    }
 }
