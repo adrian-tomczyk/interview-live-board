@@ -29,7 +29,6 @@ public class LiveMatches {
                 .orElse(null);
     }
 
-
     public void finishMatch(String home, String away) throws Exception {
         Match match = getMatch(home, away);
 
