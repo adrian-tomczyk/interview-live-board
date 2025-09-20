@@ -15,8 +15,8 @@ public class LiveMatches {
     }
 
     private static void throwUnexpectedEventType(List<MatchEventType> expectedMatchEventType, MatchEvent matchEvent) throws Exception {
-        if(!expectedMatchEventType.contains(matchEvent.matchEventType())){
-            throw new Exception("MatchEventType mismatch - expected: " + expectedMatchEventType.stream().map(Enum::toString).toList() + " got: "+ matchEvent.matchEventType().toString());
+        if (!expectedMatchEventType.contains(matchEvent.matchEventType())) {
+            throw new Exception("MatchEventType mismatch - expected: " + expectedMatchEventType.stream().map(Enum::toString).toList() + " got: " + matchEvent.matchEventType().toString());
         }
     }
 
@@ -33,7 +33,7 @@ public class LiveMatches {
 
         Match existingMatch = getMatch(matchEvent.home(), matchEvent.away());
 
-        if(existingMatch != null){
+        if (existingMatch != null) {
             throw new Exception("Match already exists");
         }
 
@@ -67,9 +67,37 @@ public class LiveMatches {
 
         Match match = getMatch(matchEvent.home(), matchEvent.away());
 
-        switch (matchEvent.matchEventType()){
+        switch (matchEvent.matchEventType()) {
             case HOME_TEAM_SCORES -> match.scoreHome();
             case AWAY_TEAM_SCORES -> match.scoreAway();
         }
+
+        updateMatchPosition(match);
+    }
+
+    private void updateMatchPosition(Match match) {
+        int insertionIndex = findInsertionIndexAfterUpdate(match);
+
+        matches.remove(match);
+        matches.add(insertionIndex,match);
+    }
+
+    private int findInsertionIndexAfterUpdate(Match match) {
+        int currentIndex = matches.indexOf(match);
+        if (currentIndex == 0) return 0;
+
+        for (int i = 0; i < currentIndex; ++i) {
+            Match matchAtIndex = matches.get(i);
+
+            if(getMatchScoreSum(matchAtIndex) < getMatchScoreSum(match)) return i;
+        }
+
+        return currentIndex;
+    }
+
+    private static int getMatchScoreSum(Match match) {
+        return match.getHomeScore() + match.getAwayScore();
     }
 }
+
+
