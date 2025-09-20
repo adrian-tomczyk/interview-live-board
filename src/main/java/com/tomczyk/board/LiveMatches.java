@@ -14,9 +14,9 @@ public class LiveMatches {
         return match.getHomeName().equals(home) && match.getAwayName().equals(away);
     }
 
-    private static void throwUnexpectedEventType(MatchEventType expectedMatchEventType, MatchEvent matchEvent) throws Exception {
-        if(matchEvent.matchEventType() != expectedMatchEventType){
-            throw new Exception("MatchEventType mismatch - expected: " + expectedMatchEventType.toString() + " got: "+ matchEvent.matchEventType().toString());
+    private static void throwUnexpectedEventType(List<MatchEventType> expectedMatchEventType, MatchEvent matchEvent) throws Exception {
+        if(!expectedMatchEventType.contains(matchEvent.matchEventType())){
+            throw new Exception("MatchEventType mismatch - expected: " + expectedMatchEventType.stream().map(Enum::toString).toList() + " got: "+ matchEvent.matchEventType().toString());
         }
     }
 
@@ -29,7 +29,7 @@ public class LiveMatches {
     }
 
     public void addMatch(MatchEvent matchEvent) throws Exception {
-        throwUnexpectedEventType(MatchEventType.MATCH_STARTED, matchEvent);
+        throwUnexpectedEventType(List.of(MatchEventType.MATCH_STARTED), matchEvent);
 
         Match match = new Match(matchEvent.home(), matchEvent.away());
         matches.addLast(match);
@@ -43,8 +43,7 @@ public class LiveMatches {
     }
 
     public void finishMatch(MatchEvent matchEvent) throws Exception {
-        throwUnexpectedEventType(MatchEventType.MATCH_FINISHED, matchEvent);
-
+        throwUnexpectedEventType(List.of(MatchEventType.MATCH_FINISHED), matchEvent);
 
         Match match = getMatch(matchEvent.home(), matchEvent.away());
 
@@ -53,5 +52,16 @@ public class LiveMatches {
         }
 
         matches.remove(match);
+    }
+
+    public void updateMatchScore(MatchEvent matchEvent) throws Exception {
+        throwUnexpectedEventType(List.of(MatchEventType.HOME_TEAM_SCORES, MatchEventType.AWAY_TEAM_SCORES), matchEvent);
+
+        Match match = getMatch(matchEvent.home(), matchEvent.away());
+
+        switch (matchEvent.matchEventType()){
+            case HOME_TEAM_SCORES -> match.scoreHome();
+            case AWAY_TEAM_SCORES -> match.scoreAway();
+        }
     }
 }

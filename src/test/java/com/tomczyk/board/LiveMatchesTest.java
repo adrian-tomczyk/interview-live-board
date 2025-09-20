@@ -45,7 +45,7 @@ public class LiveMatchesTest {
         Exception exception = assertThrows(Exception.class, () -> liveMatches.addMatch(matchEvent));
 
         //then
-        assertEquals("MatchEventType mismatch - expected: MATCH_STARTED got: MATCH_FINISHED", exception.getMessage());
+        assertEquals("MatchEventType mismatch - expected: [MATCH_STARTED] got: MATCH_FINISHED", exception.getMessage());
     }
 
     @Test
@@ -117,7 +117,7 @@ public class LiveMatchesTest {
         Exception exception = assertThrows(Exception.class, () -> liveMatches.finishMatch(matchEvent));
 
         //then
-        assertEquals("MatchEventType mismatch - expected: MATCH_FINISHED got: MATCH_STARTED", exception.getMessage());
+        assertEquals("MatchEventType mismatch - expected: [MATCH_FINISHED] got: MATCH_STARTED", exception.getMessage());
     }
 
     @Test
@@ -218,8 +218,8 @@ public class LiveMatchesTest {
         liveMatches.addMatch(matchStartEvent);
 
         //when
-        MatchEvent matchHomeScoreEvent = new MatchEvent(MatchEventType.AWAY_TEAM_SCORES, "Poland", "Uruguay");
-        liveMatches.updateMatchScore(matchHomeScoreEvent);
+        MatchEvent matchAwayScoreEvent = new MatchEvent(MatchEventType.AWAY_TEAM_SCORES, "Poland", "Uruguay");
+        liveMatches.updateMatchScore(matchAwayScoreEvent);
 
         //then
         Match match = liveMatches.getMatch("Poland", "Uruguay");
@@ -227,7 +227,7 @@ public class LiveMatchesTest {
     }
 
     @Test
-    public void shouldUpdateMatchHomeScoreTwice() throws Exception {
+    public void shouldUpdateMatchAwayScoreTwice() throws Exception {
         //given
         LiveMatches liveMatches = new LiveMatches();
 
@@ -235,12 +235,26 @@ public class LiveMatchesTest {
         liveMatches.addMatch(matchStartEvent);
 
         //when
-        MatchEvent matchHomeScoreEvent = new MatchEvent(MatchEventType.AWAY_TEAM_SCORES, "Poland", "Uruguay");
-        liveMatches.updateMatchScore(matchHomeScoreEvent);
-        liveMatches.updateMatchScore(matchHomeScoreEvent);
+        MatchEvent matchAwayScoreEvent = new MatchEvent(MatchEventType.AWAY_TEAM_SCORES, "Poland", "Uruguay");
+        liveMatches.updateMatchScore(matchAwayScoreEvent);
+        liveMatches.updateMatchScore(matchAwayScoreEvent);
 
         //then
         Match match = liveMatches.getMatch("Poland", "Uruguay");
         assertEquals(2, match.getAwayScore());
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenEventTypeMismatchOccursOnUpdateScore() {
+        //given
+        LiveMatches liveMatches = new LiveMatches();
+        MatchEvent matchEvent = new MatchEvent(MatchEventType.MATCH_STARTED, "Poland", "Uruguay");
+
+
+        //when
+        Exception exception = assertThrows(Exception.class, () -> liveMatches.updateMatchScore(matchEvent));
+
+        //then
+        assertEquals("MatchEventType mismatch - expected: [HOME_TEAM_SCORES, AWAY_TEAM_SCORES] got: MATCH_STARTED", exception.getMessage());
     }
 }

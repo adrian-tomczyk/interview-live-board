@@ -35,6 +35,14 @@ public class Match {
         return awayName;
     }
 
+    public Integer getHomeScore() {
+        return homeScore;
+    }
+
+    public Integer getAwayScore() {
+        return awayScore;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Match match)) return false;
