@@ -1,4 +1,4 @@
-package com.tomczyk.board;
+package com.tomczyk.board.match;
 
 import java.util.Objects;
 

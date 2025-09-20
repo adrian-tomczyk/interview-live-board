@@ -1,5 +1,8 @@
 package com.tomczyk.board;
 
+import com.tomczyk.board.match.Match;
+import com.tomczyk.board.match.MatchEvent;
+import com.tomczyk.board.match.MatchEventType;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,7 +21,7 @@ public class LiveMatchesTest {
 
 
     @Test
-    public void shouldAddMatchToList() {
+    public void shouldAddMatchToList() throws Exception {
         //given
         LiveMatches liveMatches = new LiveMatches();
         MatchEvent matchEvent = new MatchEvent(MatchEventType.MATCH_STARTED, "Poland", "Uruguay");
@@ -32,21 +35,21 @@ public class LiveMatchesTest {
     }
 
     @Test
-    public void shouldThrowExceptionWhenEventTypeMismatchOccurs() {
+    public void shouldThrowExceptionWhenEventTypeMismatchOccursDuringAddingMatch() {
         //given
         LiveMatches liveMatches = new LiveMatches();
         MatchEvent matchEvent = new MatchEvent(MatchEventType.MATCH_FINISHED, "Poland", "Uruguay");
 
 
         //when
-        Exception exception = assertThrows(Exception.class, ()->liveMatches.addMatch(matchEvent));
+        Exception exception = assertThrows(Exception.class, () -> liveMatches.addMatch(matchEvent));
 
         //then
-        assertEquals("MatchEventType mismatch while adding match");
+        assertEquals("MatchEventType mismatch - expected: MATCH_STARTED got: MATCH_FINISHED", exception.getMessage());
     }
 
     @Test
-    public void shouldAddMultipleMatchesToList() {
+    public void shouldAddMultipleMatchesToList() throws Exception {
         //given
         LiveMatches liveMatches = new LiveMatches();
         MatchEvent matchEvent1 = new MatchEvent(MatchEventType.MATCH_STARTED, "Poland", "Uruguay");
@@ -61,7 +64,7 @@ public class LiveMatchesTest {
     }
 
     @Test
-    public void shouldGetAddedMatch() {
+    public void shouldGetAddedMatch() throws Exception {
         //given
         LiveMatches liveMatches = new LiveMatches();
         MatchEvent matchEvent1 = new MatchEvent(MatchEventType.MATCH_STARTED, "Poland", "Uruguay");
@@ -104,17 +107,17 @@ public class LiveMatchesTest {
     }
 
     @Test
-    public void shouldThrowExceptionWhenEventTypeMismatchOccurs() {
+    public void shouldThrowExceptionWhenEventTypeMismatchOccursDuringFinishingMatch() {
         //given
         LiveMatches liveMatches = new LiveMatches();
         MatchEvent matchEvent = new MatchEvent(MatchEventType.MATCH_STARTED, "Poland", "Uruguay");
 
 
         //when
-        Exception exception = assertThrows(Exception.class, ()->liveMatches.finishMatch(matchEvent));
+        Exception exception = assertThrows(Exception.class, () -> liveMatches.finishMatch(matchEvent));
 
         //then
-        assertEquals("MatchEventType mismatch while finishing match");
+        assertEquals("MatchEventType mismatch - expected: MATCH_FINISHED got: MATCH_STARTED", exception.getMessage());
     }
 
     @Test
@@ -145,7 +148,7 @@ public class LiveMatchesTest {
     }
 
     @Test
-    public void shouldThrowExceptionWhenFinishingNotExistingMatch() {
+    public void shouldThrowExceptionWhenFinishingNotExistingMatch() throws Exception {
         //given
         LiveMatches liveMatches = new LiveMatches();
 
