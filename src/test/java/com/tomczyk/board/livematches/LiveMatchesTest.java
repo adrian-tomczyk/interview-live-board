@@ -69,7 +69,7 @@ public class LiveMatchesTest {
         //given
         LiveMatches liveMatches = new LiveMatches();
         MatchEvent matchEvent1 = new MatchEvent(MatchEventType.MATCH_STARTED, "Poland", "Uruguay");
-        MatchEvent matchEvent2 = new MatchEvent(MatchEventType.MATCH_STARTED, "Poland", "Uruguay");
+        MatchEvent matchEvent2 = new MatchEvent(MatchEventType.MATCH_STARTED, "Germany", "France");
 
         //when
         liveMatches.addMatch(matchEvent1);
@@ -288,10 +288,10 @@ public class LiveMatchesTest {
         liveMatches.addMatch(matchStartEvent3);
         liveMatches.addMatch(matchStartEvent4);
 
-        MatchEvent matchHomeScoreEvent2 = new MatchEvent(MatchEventType.MATCH_STARTED, "Mexico", "Canada");
-        MatchEvent matchHomeScoreEvent4 = new MatchEvent(MatchEventType.MATCH_STARTED, "Argentina", "Australia");
-        MatchEvent matchAwayScoreEvent3 = new MatchEvent(MatchEventType.MATCH_STARTED, "Germany", "France");
-        MatchEvent matchAwayScoreEvent4 = new MatchEvent(MatchEventType.MATCH_STARTED, "Argentina", "Australia");
+        MatchEvent matchHomeScoreEvent2 = new MatchEvent(MatchEventType.HOME_TEAM_SCORES, "Mexico", "Canada");
+        MatchEvent matchHomeScoreEvent4 = new MatchEvent(MatchEventType.HOME_TEAM_SCORES, "Argentina", "Australia");
+        MatchEvent matchAwayScoreEvent3 = new MatchEvent(MatchEventType.AWAY_TEAM_SCORES, "Germany", "France");
+        MatchEvent matchAwayScoreEvent4 = new MatchEvent(MatchEventType.AWAY_TEAM_SCORES, "Argentina", "Australia");
 
         liveMatches.updateMatchScore(matchHomeScoreEvent2);
         liveMatches.updateMatchScore(matchHomeScoreEvent2);
