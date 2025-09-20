@@ -34,6 +34,22 @@ public class LiveMatchesTest {
         assertEquals(1, liveMatches.getCurrentMatches().size());
     }
 
+
+    @Test
+    public void shouldThrowExceptionWhenMatchAlreadyExists() throws Exception {
+        //given
+        LiveMatches liveMatches = new LiveMatches();
+        MatchEvent matchEvent = new MatchEvent(MatchEventType.MATCH_STARTED, "Poland", "Uruguay");
+        liveMatches.addMatch(matchEvent);
+
+        //when
+        Exception exception = assertThrows(Exception.class, ()-> liveMatches.addMatch(matchEvent));
+
+        //then
+        assertEquals("Match already exists", exception.getMessage());
+        assertEquals(1, liveMatches.getCurrentMatches().size());
+    }
+
     @Test
     public void shouldThrowExceptionWhenEventTypeMismatchOccursDuringAddingMatch() {
         //given
@@ -249,7 +265,6 @@ public class LiveMatchesTest {
         //given
         LiveMatches liveMatches = new LiveMatches();
         MatchEvent matchEvent = new MatchEvent(MatchEventType.MATCH_STARTED, "Poland", "Uruguay");
-
 
         //when
         Exception exception = assertThrows(Exception.class, () -> liveMatches.updateMatchScore(matchEvent));

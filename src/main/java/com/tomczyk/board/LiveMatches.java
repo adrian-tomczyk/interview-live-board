@@ -31,7 +31,15 @@ public class LiveMatches {
     public void addMatch(MatchEvent matchEvent) throws Exception {
         throwUnexpectedEventType(List.of(MatchEventType.MATCH_STARTED), matchEvent);
 
+        Match existingMatch = getMatch(matchEvent.home(), matchEvent.away());
+
+        if(existingMatch != null){
+            throw new Exception("Match already exists");
+        }
+
         Match match = new Match(matchEvent.home(), matchEvent.away());
+
+
         matches.addLast(match);
     }
 
