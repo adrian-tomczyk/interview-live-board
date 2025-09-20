@@ -140,4 +140,27 @@ public class MatchTest {
         //then
         assertEquals("Canada", match.getAwayName());
     }
+
+
+    @Test
+    void shouldGetHomeScore() {
+        //given
+        Match match = new Match("Mexico", "Canada");
+        match.scoreHome();
+
+        //when
+        //then
+        assertEquals(1, match.getHomeScore());
+    }
+
+    @Test
+    void shouldGetAwayScore() {
+        //given
+        Match match = new Match("Mexico", "Canada");
+        match.scoreAway();
+
+        //when
+        //then
+        assertEquals(1, match.getAwayScore());
+    }
 }

@@ -173,4 +173,74 @@ public class LiveMatchesTest {
         assertEquals("Poland", resMatch2.getHomeName());
         assertEquals("Uruguay", resMatch2.getAwayName());
     }
+
+    @Test
+    public void shouldUpdateMatchHomeScore() throws Exception {
+        //given
+        LiveMatches liveMatches = new LiveMatches();
+
+        MatchEvent matchStartEvent = new MatchEvent(MatchEventType.MATCH_STARTED, "Poland", "Uruguay");
+        liveMatches.addMatch(matchStartEvent);
+
+        //when
+        MatchEvent matchHomeScoreEvent = new MatchEvent(MatchEventType.HOME_TEAM_SCORES, "Poland", "Uruguay");
+        liveMatches.updateMatchScore(matchHomeScoreEvent);
+
+        //then
+        Match match = liveMatches.getMatch("Poland", "Uruguay");
+        assertEquals(1, match.getHomeScore());
+    }
+
+    @Test
+    public void shouldUpdateMatchHomeScoreTwice() throws Exception {
+        //given
+        LiveMatches liveMatches = new LiveMatches();
+
+        MatchEvent matchStartEvent = new MatchEvent(MatchEventType.MATCH_STARTED, "Poland", "Uruguay");
+        liveMatches.addMatch(matchStartEvent);
+
+        //when
+        MatchEvent matchHomeScoreEvent = new MatchEvent(MatchEventType.HOME_TEAM_SCORES, "Poland", "Uruguay");
+        liveMatches.updateMatchScore(matchHomeScoreEvent);
+        liveMatches.updateMatchScore(matchHomeScoreEvent);
+
+        //then
+        Match match = liveMatches.getMatch("Poland", "Uruguay");
+        assertEquals(2, match.getHomeScore());
+    }
+
+    @Test
+    public void shouldUpdateMatchAwayScore() throws Exception {
+        //given
+        LiveMatches liveMatches = new LiveMatches();
+
+        MatchEvent matchStartEvent = new MatchEvent(MatchEventType.MATCH_STARTED, "Poland", "Uruguay");
+        liveMatches.addMatch(matchStartEvent);
+
+        //when
+        MatchEvent matchHomeScoreEvent = new MatchEvent(MatchEventType.AWAY_TEAM_SCORES, "Poland", "Uruguay");
+        liveMatches.updateMatchScore(matchHomeScoreEvent);
+
+        //then
+        Match match = liveMatches.getMatch("Poland", "Uruguay");
+        assertEquals(1, match.getAwayScore());
+    }
+
+    @Test
+    public void shouldUpdateMatchHomeScoreTwice() throws Exception {
+        //given
+        LiveMatches liveMatches = new LiveMatches();
+
+        MatchEvent matchStartEvent = new MatchEvent(MatchEventType.MATCH_STARTED, "Poland", "Uruguay");
+        liveMatches.addMatch(matchStartEvent);
+
+        //when
+        MatchEvent matchHomeScoreEvent = new MatchEvent(MatchEventType.AWAY_TEAM_SCORES, "Poland", "Uruguay");
+        liveMatches.updateMatchScore(matchHomeScoreEvent);
+        liveMatches.updateMatchScore(matchHomeScoreEvent);
+
+        //then
+        Match match = liveMatches.getMatch("Poland", "Uruguay");
+        assertEquals(2, match.getAwayScore());
+    }
 }
