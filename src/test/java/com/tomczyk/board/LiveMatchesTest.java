@@ -60,7 +60,6 @@ public class LiveMatchesTest {
         assertEquals(match1, resMatch);
     }
 
-
     @Test
     public void shouldNotGetAddedMatchWhenDoesNotExists(){
         //given
@@ -71,5 +70,43 @@ public class LiveMatchesTest {
 
         //then
         assertNull(resMatch);
+    }
+
+    @Test
+    public void shouldFinishMatch(){
+        //given
+        LiveMatches liveMatches = new LiveMatches();
+        Match match1 = new Match("Poland", "Uruguay");
+        liveMatches.addMatch(match1);
+
+        //when
+        Match resMatch = liveMatches.finishMatch("Poland", "Uruguay");
+
+        //then
+        assertNull(resMatch);
+    }
+
+    @Test
+    public void shouldFinishOnlyMatchingMatch(){
+        //given
+        LiveMatches liveMatches = new LiveMatches();
+        Match match1 = new Match("Poland", "Equador");
+        Match match2 = new Match("Poland", "Uruguay");
+        Match match3 = new Match("Equador", "Uruguay");
+
+        liveMatches.addMatch(match1);
+        liveMatches.addMatch(match2);
+        liveMatches.addMatch(match3);
+
+        //when
+        Match finishedMatch = liveMatches.getMatch("Poland", "Equador");
+        Match match1Res = liveMatches.finishMatch("Poland", "Uruguay");
+        Match match3res = liveMatches.getMatch("Equador", "Uruguay");
+
+        //then
+        assertNull(finishedMatch);
+        assertEquals(match1, match1Res);
+        assertEquals(match1, match3Res);
+
     }
 }
