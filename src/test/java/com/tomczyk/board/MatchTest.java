@@ -2,7 +2,6 @@ package com.tomczyk.board;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MatchTest {
@@ -19,7 +18,7 @@ public class MatchTest {
     }
 
     @Test
-    void shouldUpdateHomeScore() throws Exception {
+    void shouldUpdateHomeScore() {
         //given
         Match match = new Match("Mexico", "Canada");
 
@@ -32,7 +31,7 @@ public class MatchTest {
     }
 
     @Test
-    void shouldUpdateAwayScore() throws Exception {
+    void shouldUpdateAwayScore() {
         //given
         Match match = new Match("Mexico", "Canada");
 
