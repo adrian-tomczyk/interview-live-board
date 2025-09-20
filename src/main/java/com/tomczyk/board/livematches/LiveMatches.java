@@ -8,10 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LiveMatches {
-    final ArrayList<Match> matches;
+    final ArrayList<OrderedMatchAdapter> matches;
+    private Integer matchesCount;
 
-    private boolean areTeamsEqual(Match match, String home, String away) {
-        return match.getHomeName().equals(home) && match.getAwayName().equals(away);
+    private boolean areTeamsEqual(OrderedMatchAdapter orderedMatchAdapter, String home, String away) {
+        return orderedMatchAdapter.match().getHomeName().equals(home) && orderedMatchAdapter.match().getAwayName().equals(away);
     }
 
     private static void throwUnexpectedEventType(List<MatchEventType> expectedMatchEventType, MatchEvent matchEvent) throws Exception {
@@ -22,10 +23,11 @@ public class LiveMatches {
 
     public LiveMatches() {
         matches = new ArrayList<>();
+        matchesCount = 0;
     }
 
     public List<Match> getCurrentMatches() {
-        return matches.stream().toList();
+        return matches.stream().map(OrderedMatchAdapter::match).toList();
     }
 
     public void addMatch(MatchEvent matchEvent) throws Exception {
@@ -38,12 +40,20 @@ public class LiveMatches {
         }
 
         Match match = new Match(matchEvent.home(), matchEvent.away());
+        OrderedMatchAdapter orderedMatchAdapter = new OrderedMatchAdapter(match,matchesCount);
 
-
-        matches.addLast(match);
+        matches.addLast(orderedMatchAdapter);
+        matchesCount++;
     }
 
     public Match getMatch(String home, String away) {
+        OrderedMatchAdapter orderedMatchAdapter = getOrderedMatchAdapter(home,away);
+        if(orderedMatchAdapter == null) return null;
+
+        return getOrderedMatchAdapter(home,away).match();
+    }
+
+    private OrderedMatchAdapter getOrderedMatchAdapter(String home, String away) {
         return matches.stream()
                 .filter(match -> areTeamsEqual(match, home, away))
                 .findFirst()
@@ -53,50 +63,54 @@ public class LiveMatches {
     public void finishMatch(MatchEvent matchEvent) throws Exception {
         throwUnexpectedEventType(List.of(MatchEventType.MATCH_FINISHED), matchEvent);
 
-        Match match = getMatch(matchEvent.home(), matchEvent.away());
+        OrderedMatchAdapter orderedMatchAdapter = getOrderedMatchAdapter(matchEvent.home(), matchEvent.away());
 
-        if (match == null) {
+        if (orderedMatchAdapter == null) {
             throw new Exception("Match does not exists");
         }
 
-        matches.remove(match);
+        matches.remove(orderedMatchAdapter);
     }
 
     public void updateMatchScore(MatchEvent matchEvent) throws Exception {
         throwUnexpectedEventType(List.of(MatchEventType.HOME_TEAM_SCORES, MatchEventType.AWAY_TEAM_SCORES), matchEvent);
 
-        Match match = getMatch(matchEvent.home(), matchEvent.away());
+        OrderedMatchAdapter orderedMatchAdapter = getOrderedMatchAdapter(matchEvent.home(), matchEvent.away());
 
         switch (matchEvent.matchEventType()) {
-            case HOME_TEAM_SCORES -> match.scoreHome();
-            case AWAY_TEAM_SCORES -> match.scoreAway();
+            case HOME_TEAM_SCORES -> orderedMatchAdapter.match().scoreHome();
+            case AWAY_TEAM_SCORES -> orderedMatchAdapter.match().scoreAway();
         }
 
-        updateMatchPosition(match);
+        updateMatchPosition(orderedMatchAdapter);
     }
 
-    private void updateMatchPosition(Match match) {
-        int insertionIndex = findInsertionIndexAfterUpdate(match);
+    private void updateMatchPosition(OrderedMatchAdapter orderedMatchAdapter) {
+        int insertionIndex = findInsertionIndexAfterUpdate(orderedMatchAdapter);
 
-        matches.remove(match);
-        matches.add(insertionIndex,match);
+        matches.remove(orderedMatchAdapter);
+        matches.add(insertionIndex, orderedMatchAdapter);
     }
 
-    private int findInsertionIndexAfterUpdate(Match match) {
-        int currentIndex = matches.indexOf(match);
+    private int findInsertionIndexAfterUpdate(OrderedMatchAdapter orderedMatchAdapter) {
+        int currentIndex = matches.indexOf(orderedMatchAdapter);
         if (currentIndex == 0) return 0;
 
         for (int i = 0; i < currentIndex; ++i) {
-            Match matchAtIndex = matches.get(i);
+            OrderedMatchAdapter matchAtIndex = matches.get(i);
 
-            if(getMatchScoreSum(matchAtIndex) < getMatchScoreSum(match)) return i;
+            if(shouldMatchBePushedDown(orderedMatchAdapter, matchAtIndex)) return i;
         }
 
         return currentIndex;
     }
 
-    private static int getMatchScoreSum(Match match) {
-        return match.getHomeScore() + match.getAwayScore();
+    private static boolean shouldMatchBePushedDown(OrderedMatchAdapter orderedMatchAdapter, OrderedMatchAdapter matchAtIndex) {
+        return getOrderedMatchAdapterScoreSum(matchAtIndex) < getOrderedMatchAdapterScoreSum(orderedMatchAdapter) || (getOrderedMatchAdapterScoreSum(matchAtIndex) == getOrderedMatchAdapterScoreSum(orderedMatchAdapter) && matchAtIndex.order() < orderedMatchAdapter.order());
+    }
+
+    private static int getOrderedMatchAdapterScoreSum(OrderedMatchAdapter orderedMatchAdapter) {
+        return orderedMatchAdapter.match().getHomeScore() + orderedMatchAdapter.match().getAwayScore();
     }
 }
 

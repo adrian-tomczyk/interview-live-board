@@ -405,7 +405,6 @@ public class LiveMatchesTest {
         repeatScoreEvent(liveMatches, 2, MatchEventType.HOME_TEAM_SCORES, "Germany","France");
         repeatScoreEvent(liveMatches, 2, MatchEventType.AWAY_TEAM_SCORES, "Germany","France");
 
-
         repeatScoreEvent(liveMatches, 6, MatchEventType.HOME_TEAM_SCORES, "Uruguay","Italy");
         repeatScoreEvent(liveMatches, 6, MatchEventType.AWAY_TEAM_SCORES, "Uruguay","Italy");
 
@@ -420,7 +419,7 @@ public class LiveMatchesTest {
         Match match4 = liveMatches.getCurrentMatches().get(3);
         Match match5 = liveMatches.getCurrentMatches().get(4);
 
-
+        System.out.println(liveMatches.getCurrentMatches());
         //then
         assertEquals("Uruguay", match1.getHomeName());
         assertEquals("Italy", match1.getAwayName());
