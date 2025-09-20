@@ -3,6 +3,7 @@ package com.tomczyk.board;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class LiveMatchesTest {
 
@@ -13,7 +14,7 @@ public class LiveMatchesTest {
 
         //when
         //then
-        assertEquals(0, liveMatches.currentMatches.size());
+        assertEquals(0, liveMatches.getCurrentMatches().size());
     }
 
 
@@ -27,7 +28,7 @@ public class LiveMatchesTest {
         liveMatches.addMatch(match);
 
         //then
-        assertEquals(1, liveMatches.currentMatches.size());
+        assertEquals(1, liveMatches.getCurrentMatches().size());
     }
 
     @Test
@@ -42,7 +43,7 @@ public class LiveMatchesTest {
         liveMatches.addMatch(match2);
 
         //then
-        assertEquals(2, liveMatches.currentMatches.size());
+        assertEquals(2, liveMatches.getCurrentMatches().size());
     }
 
     @Test
@@ -50,6 +51,7 @@ public class LiveMatchesTest {
         //given
         LiveMatches liveMatches = new LiveMatches();
         Match match1 = new Match("Poland", "Uruguay");
+        liveMatches.addMatch(match1);
 
         //when
         Match resMatch = liveMatches.getMatch("Poland", "Uruguay");
@@ -68,6 +70,6 @@ public class LiveMatchesTest {
         Match resMatch = liveMatches.getMatch("Poland", "Uruguay");
 
         //then
-        assertEquals(null, resMatch);
+        assertNull(resMatch);
     }
 }

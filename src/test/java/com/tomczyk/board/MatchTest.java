@@ -120,4 +120,24 @@ public class MatchTest {
         //then
         assertFalse(isEqual);
     }
+
+    @Test
+    void shouldContainHomeName() {
+        //given
+        Match match = new Match("Mexico", "Canada");
+
+        //when
+        //then
+        assertEquals("Mexico", match.getHomeName());
+    }
+
+    @Test
+    void shouldContainAwayName() {
+        //given
+        Match match = new Match("Mexico", "Canada");
+
+        //when
+        //then
+        assertEquals("Canada", match.getAwayName());
+    }
 }

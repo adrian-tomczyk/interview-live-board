@@ -1,5 +1,7 @@
 package com.tomczyk.board;
 
+import java.util.Objects;
+
 public class Match {
     private Integer homeScore;
     private Integer awayScore;
@@ -23,5 +25,19 @@ public class Match {
 
     public void scoreAway() {
         awayScore++;
+    }
+
+    public String getHomeName(){
+        return homeName;
+    }
+
+    public String getAwayName(){
+        return awayName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Match match)) return false;
+        return Objects.equals(homeScore, match.homeScore) && Objects.equals(awayScore, match.awayScore) && Objects.equals(homeName, match.homeName) && Objects.equals(awayName, match.awayName);
     }
 }
