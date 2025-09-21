@@ -1,4 +1,5 @@
 # Decisions
-- At first I created a solution that was a bit complicated. What i wanted to achieve is solution which will be really easy to maintain, extend later on and provide potentially faster sorting algorithm for this case. But since in task description stands "As simple as possible" I decided to scrap the solution I had before.
+- At first, I created a solution that was a bit complicated. What I wanted to achieve is a solution which will be really easy to maintain, extend later on and provide potentially faster sorting algorithm for this case. But since the task description says "Keep it simple", I decided to abandon the solution I had before.
 - LiveFootballWorldCupScoreBoardTest class exists as a kind of Facade. Before it had more functionality. I left it as is, because it provides a readable result of changing scoreboard. I didn't want to put displaying logic into LiveMatches class.
-- 
+- Double spaces between functions separates them visually (that's my preference)
+- In my primary solution I decided to separate updateScore into two functions - it significantly reduces problems with updating score. I could easily add event that could deduce points in such case.

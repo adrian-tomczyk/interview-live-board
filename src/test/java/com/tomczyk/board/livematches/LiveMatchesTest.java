@@ -164,27 +164,11 @@ public class LiveMatchesTest {
         createMatch(liveMatches, Country.POLAND, Country.URUGUAY);
 
         //when
-        liveMatches.scoreHome(Country.POLAND, Country.URUGUAY);
+        liveMatches.updateScore(Country.POLAND, Country.URUGUAY, 2 ,0);
 
         //then
         Match match = liveMatches.getMatchByTeamNames(Country.POLAND, Country.URUGUAY);
         assertEquals(1, match.getHomeScore());
-    }
-
-
-    @Test
-    public void shouldUpdateMatchHomeScoreTwice() {
-        //given
-        LiveMatches liveMatches = new LiveMatches();
-
-        createMatch(liveMatches, Country.POLAND, Country.URUGUAY);
-
-        //when
-        repeatScoreHomeEvent(liveMatches, 2, Country.POLAND, Country.URUGUAY);
-
-        //then
-        Match match = liveMatches.getMatchByTeamNames(Country.POLAND, Country.URUGUAY);
-        assertEquals(2, match.getHomeScore());
     }
 
 
@@ -196,28 +180,11 @@ public class LiveMatchesTest {
         createMatch(liveMatches, Country.POLAND, Country.URUGUAY);
 
         //when
-        liveMatches.scoreAway(Country.POLAND, Country.URUGUAY);
+        liveMatches.updateScore(Country.POLAND, Country.URUGUAY, 0, 2);
 
         //then
         Match match = liveMatches.getMatchByTeamNames(Country.POLAND, Country.URUGUAY);
         assertEquals(1, match.getAwayScore());
-    }
-
-
-    @Test
-    public void shouldUpdateMatchAwayScoreTwice() {
-        //given
-        LiveMatches liveMatches = new LiveMatches();
-
-        createMatch(liveMatches, Country.POLAND, Country.URUGUAY);
-
-        //when
-        repeatScoreAwayEvent(liveMatches, 2, Country.POLAND, Country.URUGUAY);
-
-
-        //then
-        Match match = liveMatches.getMatchByTeamNames(Country.POLAND, Country.URUGUAY);
-        assertEquals(2, match.getAwayScore());
     }
 
 
@@ -244,13 +211,9 @@ public class LiveMatchesTest {
         createMatch(liveMatches, Country.GERMANY, Country.FRANCE);
         createMatch(liveMatches, Country.ARGENTINA, Country.AUSTRALIA);
 
-        repeatScoreHomeEvent(liveMatches, 3, Country.MEXICO, Country.CANADA);
-
-        repeatScoreAwayEvent(liveMatches, 4, Country.GERMANY, Country.FRANCE);
-
-        repeatScoreHomeEvent(liveMatches, 3, Country.ARGENTINA, Country.AUSTRALIA);
-        repeatScoreAwayEvent(liveMatches, 3, Country.ARGENTINA, Country.AUSTRALIA);
-
+        liveMatches.updateScore(Country.MEXICO, Country.CANADA, 3, 0);
+        liveMatches.updateScore(Country.GERMANY, Country.FRANCE, 0, 4);
+        liveMatches.updateScore(Country.ARGENTINA, Country.ARGENTINA, 3, 3);
 
         //when
         Match match1 = liveMatches.getCurrentMatches().getFirst();
@@ -317,20 +280,11 @@ public class LiveMatchesTest {
         createMatch(liveMatches, Country.URUGUAY, Country.ITALY);
         createMatch(liveMatches, Country.ARGENTINA, Country.AUSTRALIA);
 
-        repeatScoreAwayEvent(liveMatches, 5, Country.MEXICO, Country.CANADA);
-
-        repeatScoreHomeEvent(liveMatches, 10, Country.SPAIN, Country.BRAZIL);
-        repeatScoreHomeEvent(liveMatches, 2, Country.SPAIN, Country.BRAZIL);
-
-        repeatScoreHomeEvent(liveMatches, 2, Country.GERMANY, Country.FRANCE);
-        repeatScoreAwayEvent(liveMatches, 2, Country.GERMANY, Country.FRANCE);
-
-        repeatScoreHomeEvent(liveMatches, 6, Country.URUGUAY, Country.ITALY);
-        repeatScoreAwayEvent(liveMatches, 6, Country.URUGUAY, Country.ITALY);
-
-        repeatScoreHomeEvent(liveMatches, 3, Country.ARGENTINA, Country.AUSTRALIA);
-        repeatScoreAwayEvent(liveMatches, 1, Country.ARGENTINA, Country.AUSTRALIA);
-
+        liveMatches.updateScore(Country.MEXICO, Country.CANADA, 0, 5);
+        liveMatches.updateScore(Country.SPAIN, Country.BRAZIL, 10, 2);
+        liveMatches.updateScore(Country.GERMANY, Country.FRANCE, 2, 2);
+        liveMatches.updateScore(Country.URUGUAY, Country.ITALY, 6, 6);
+        liveMatches.updateScore(Country.ARGENTINA, Country.AUSTRALIA, 3, 1);
 
         //when
         Match match1 = liveMatches.getCurrentMatches().getFirst();
@@ -367,14 +321,4 @@ public class LiveMatchesTest {
         liveMatches.finishMatch(home, away);
     }
 
-
-    private static void repeatScoreHomeEvent(LiveMatches liveMatches, int times, String home, String away) {
-        IntStream.range(0, times).forEach(i -> liveMatches.scoreHome(home, away));
-    }
-
-
-    private static void repeatScoreAwayEvent(LiveMatches liveMatches, int times, String home, String away) {
-        IntStream.range(0, times).forEach(i -> liveMatches.scoreAway(home, away));
-
-    }
 }

@@ -60,35 +60,20 @@ public class LiveFootballWorldCupScoreBoardTest {
 
 
     @Test
-    public void shouldUpdateHomeScore() {
+    public void shouldUpdateScore() {
         //given
         liveFootballWorldCupScoreBoard.startGame(Country.POLAND, Country.URUGUAY);
 
         //when
-        liveFootballWorldCupScoreBoard.scoreHome(Country.POLAND, Country.URUGUAY);
+        liveFootballWorldCupScoreBoard.updateScore(Country.POLAND, Country.URUGUAY, 1, 2);
 
 
         //then
-        verify(liveMatches, times(1)).scoreHome(
+        verify(liveMatches, times(1)).updateScore(
                 argThat((home) -> Country.POLAND.equals(home)),
-                argThat((away) -> Country.URUGUAY.equals(away))
-        );
-    }
-
-
-    @Test
-    public void shouldUpdateAwayScore() {
-        //given
-        liveFootballWorldCupScoreBoard.startGame(Country.POLAND, Country.URUGUAY);
-
-        //when
-        liveFootballWorldCupScoreBoard.scoreAway(Country.POLAND, Country.URUGUAY);
-
-
-        //then
-        verify(liveMatches, times(1)).scoreAway(
-                argThat((home) -> Country.POLAND.equals(home)),
-                argThat((away) -> Country.URUGUAY.equals(away))
+                argThat((away) -> Country.URUGUAY.equals(away)),
+                argThat((scoreHome) -> scoreHome == 1),
+                argThat((scoreAway) -> scoreAway == 2)
         );
     }
 
@@ -97,11 +82,11 @@ public class LiveFootballWorldCupScoreBoardTest {
     public void shouldGetScoreBoardString() {
         //given
         Match match1 = new Match(Country.POLAND, Country.URUGUAY);
-        match1.scoreHome();
+        match1.updateScore(Country.POLAND, Country.URUGUAY, 1, 0);
 
         Match match2 = new Match(Country.MEXICO, Country.CANADA);
-        match2.scoreAway();
-        match2.scoreAway();
+        match1.updateScore(Country.POLAND, Country.URUGUAY, 1, 2);
+
 
         //when
         when(liveMatches.getCurrentMatches())
