@@ -270,6 +270,20 @@ public class LiveMatchesTest {
 
 
     @Test
+    public void shouldThrowExceptionWhenMatchDoesNotExistsOnUpdateScore() {
+        //given
+        LiveMatches liveMatches = new LiveMatches();
+        MatchEvent matchEvent = new MatchEvent(MatchEventType.AWAY_TEAM_SCORES, Country.POLAND, Country.URUGUAY);
+
+        //when
+        Exception exception = assertThrows(Exception.class, () -> liveMatches.updateMatchScore(matchEvent));
+
+        //then
+        assertEquals("Match does not exists", exception.getMessage());
+    }
+
+
+    @Test
     public void shouldOrderMatchesByHighestScoreSum() throws Exception {
         //given
         LiveMatches liveMatches = new LiveMatches();

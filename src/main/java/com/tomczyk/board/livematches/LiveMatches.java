@@ -19,7 +19,7 @@ public class LiveMatches {
 
 
     public void addMatch(MatchEvent matchEvent) throws Exception {
-        throwUnexpectedEventType(List.of(MatchEventType.MATCH_STARTED), matchEvent);
+        throwIfUnexpectedEventType(List.of(MatchEventType.MATCH_STARTED), matchEvent);
 
         Match existingMatch = getMatch(matchEvent.home(), matchEvent.away());
 
@@ -36,13 +36,11 @@ public class LiveMatches {
 
 
     public void finishMatch(MatchEvent matchEvent) throws Exception {
-        throwUnexpectedEventType(List.of(MatchEventType.MATCH_FINISHED), matchEvent);
+        throwIfUnexpectedEventType(List.of(MatchEventType.MATCH_FINISHED), matchEvent);
 
         OrderedMatchAdapter orderedMatchAdapter = getOrderedMatchAdapter(matchEvent.home(), matchEvent.away());
 
-        if (orderedMatchAdapter == null) {
-            throw new Exception("Match does not exists");
-        }
+        throwIfMatchDoesNotExists(orderedMatchAdapter);
 
         matches.remove(orderedMatchAdapter);
     }
@@ -62,9 +60,11 @@ public class LiveMatches {
 
 
     public void updateMatchScore(MatchEvent matchEvent) throws Exception {
-        throwUnexpectedEventType(List.of(MatchEventType.HOME_TEAM_SCORES, MatchEventType.AWAY_TEAM_SCORES), matchEvent);
+        throwIfUnexpectedEventType(List.of(MatchEventType.HOME_TEAM_SCORES, MatchEventType.AWAY_TEAM_SCORES), matchEvent);
 
         OrderedMatchAdapter orderedMatchAdapter = getOrderedMatchAdapter(matchEvent.home(), matchEvent.away());
+
+        throwIfMatchDoesNotExists(orderedMatchAdapter);
 
         switch (matchEvent.matchEventType()) {
             case HOME_TEAM_SCORES -> orderedMatchAdapter.match().scoreHome();
@@ -80,9 +80,16 @@ public class LiveMatches {
     }
 
 
-    private static void throwUnexpectedEventType(List<MatchEventType> expectedMatchEventType, MatchEvent matchEvent) throws Exception {
+    private static void throwIfUnexpectedEventType(List<MatchEventType> expectedMatchEventType, MatchEvent matchEvent) throws Exception {
         if (!expectedMatchEventType.contains(matchEvent.matchEventType())) {
             throw new Exception("MatchEventType mismatch - expected: " + expectedMatchEventType.stream().map(Enum::toString).toList() + " got: " + matchEvent.matchEventType().toString());
+        }
+    }
+
+
+    private static void throwIfMatchDoesNotExists(OrderedMatchAdapter orderedMatchAdapter) throws Exception {
+        if (orderedMatchAdapter == null) {
+            throw new Exception("Match does not exists");
         }
     }
 
