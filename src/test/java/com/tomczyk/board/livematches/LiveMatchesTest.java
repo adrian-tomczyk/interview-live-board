@@ -10,7 +10,7 @@ import java.util.stream.IntStream;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class LiveMatchesTest {
-    
+
     final String POLAND = "Poland";
     final String URUGUAY = "Uruguay";
     final String MEXICO = "Mexico";
@@ -23,7 +23,7 @@ public class LiveMatchesTest {
     final String ARGENTINA = "Argentina";
     final String AUSTRALIA = "Australia";
     final String EQUADOR = "Equador";
-    
+
     @Test
     public void shouldInitWithEmptyMatchesList() {
         //given
@@ -216,7 +216,7 @@ public class LiveMatchesTest {
         createMatch(liveMatches, POLAND, URUGUAY);
 
         //when
-        repeatScoreEvent(liveMatches, 2, MatchEventType.HOME_TEAM_SCORES, POLAND,URUGUAY);
+        repeatScoreEvent(liveMatches, 2, MatchEventType.HOME_TEAM_SCORES, POLAND, URUGUAY);
 
         //then
         Match match = liveMatches.getMatch(POLAND, URUGUAY);
@@ -247,7 +247,7 @@ public class LiveMatchesTest {
         createMatch(liveMatches, POLAND, URUGUAY);
 
         //when
-        repeatScoreEvent(liveMatches, 2, MatchEventType.AWAY_TEAM_SCORES, POLAND,URUGUAY);
+        repeatScoreEvent(liveMatches, 2, MatchEventType.AWAY_TEAM_SCORES, POLAND, URUGUAY);
 
 
         //then
@@ -278,12 +278,12 @@ public class LiveMatchesTest {
         createMatch(liveMatches, GERMANY, FRANCE);
         createMatch(liveMatches, ARGENTINA, AUSTRALIA);
 
-        repeatScoreEvent(liveMatches, 3, MatchEventType.HOME_TEAM_SCORES, MEXICO,CANADA);
+        repeatScoreEvent(liveMatches, 3, MatchEventType.HOME_TEAM_SCORES, MEXICO, CANADA);
 
-        repeatScoreEvent(liveMatches, 4, MatchEventType.AWAY_TEAM_SCORES, GERMANY,FRANCE);
+        repeatScoreEvent(liveMatches, 4, MatchEventType.AWAY_TEAM_SCORES, GERMANY, FRANCE);
 
-        repeatScoreEvent(liveMatches, 3, MatchEventType.HOME_TEAM_SCORES, ARGENTINA,AUSTRALIA);
-        repeatScoreEvent(liveMatches, 3, MatchEventType.AWAY_TEAM_SCORES, ARGENTINA,AUSTRALIA);
+        repeatScoreEvent(liveMatches, 3, MatchEventType.HOME_TEAM_SCORES, ARGENTINA, AUSTRALIA);
+        repeatScoreEvent(liveMatches, 3, MatchEventType.AWAY_TEAM_SCORES, ARGENTINA, AUSTRALIA);
 
 
         //when
@@ -350,19 +350,19 @@ public class LiveMatchesTest {
         createMatch(liveMatches, URUGUAY, ITALY);
         createMatch(liveMatches, ARGENTINA, AUSTRALIA);
 
-        repeatScoreEvent(liveMatches, 5, MatchEventType.AWAY_TEAM_SCORES, MEXICO,CANADA);
+        repeatScoreEvent(liveMatches, 5, MatchEventType.AWAY_TEAM_SCORES, MEXICO, CANADA);
 
-        repeatScoreEvent(liveMatches, 10, MatchEventType.HOME_TEAM_SCORES, SPAIN,BRAZIL);
-        repeatScoreEvent(liveMatches, 2, MatchEventType.AWAY_TEAM_SCORES, SPAIN,BRAZIL);
+        repeatScoreEvent(liveMatches, 10, MatchEventType.HOME_TEAM_SCORES, SPAIN, BRAZIL);
+        repeatScoreEvent(liveMatches, 2, MatchEventType.AWAY_TEAM_SCORES, SPAIN, BRAZIL);
 
-        repeatScoreEvent(liveMatches, 2, MatchEventType.HOME_TEAM_SCORES, GERMANY,FRANCE);
-        repeatScoreEvent(liveMatches, 2, MatchEventType.AWAY_TEAM_SCORES, GERMANY,FRANCE);
+        repeatScoreEvent(liveMatches, 2, MatchEventType.HOME_TEAM_SCORES, GERMANY, FRANCE);
+        repeatScoreEvent(liveMatches, 2, MatchEventType.AWAY_TEAM_SCORES, GERMANY, FRANCE);
 
-        repeatScoreEvent(liveMatches, 6, MatchEventType.HOME_TEAM_SCORES, URUGUAY,ITALY);
-        repeatScoreEvent(liveMatches, 6, MatchEventType.AWAY_TEAM_SCORES, URUGUAY,ITALY);
+        repeatScoreEvent(liveMatches, 6, MatchEventType.HOME_TEAM_SCORES, URUGUAY, ITALY);
+        repeatScoreEvent(liveMatches, 6, MatchEventType.AWAY_TEAM_SCORES, URUGUAY, ITALY);
 
-        repeatScoreEvent(liveMatches, 3, MatchEventType.HOME_TEAM_SCORES, ARGENTINA,AUSTRALIA);
-        repeatScoreEvent(liveMatches, 1, MatchEventType.AWAY_TEAM_SCORES, ARGENTINA,AUSTRALIA);
+        repeatScoreEvent(liveMatches, 3, MatchEventType.HOME_TEAM_SCORES, ARGENTINA, AUSTRALIA);
+        repeatScoreEvent(liveMatches, 1, MatchEventType.AWAY_TEAM_SCORES, ARGENTINA, AUSTRALIA);
 
 
         //when
