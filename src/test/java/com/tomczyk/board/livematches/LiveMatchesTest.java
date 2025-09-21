@@ -6,7 +6,7 @@ import com.tomczyk.board.utils.Country;
 import com.tomczyk.board.match.Match;
 import org.junit.jupiter.api.Test;
 
-import java.util.stream.IntStream;
+import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -164,11 +164,11 @@ public class LiveMatchesTest {
         createMatch(liveMatches, Country.POLAND, Country.URUGUAY);
 
         //when
-        liveMatches.updateScore(Country.POLAND, Country.URUGUAY, 2 ,0);
+        liveMatches.updateScore(Country.POLAND, Country.URUGUAY, 2, 0);
 
         //then
         Match match = liveMatches.getMatchByTeamNames(Country.POLAND, Country.URUGUAY);
-        assertEquals(1, match.getHomeScore());
+        assertEquals(2, match.getHomeScore());
     }
 
 
@@ -180,7 +180,7 @@ public class LiveMatchesTest {
         createMatch(liveMatches, Country.POLAND, Country.URUGUAY);
 
         //when
-        liveMatches.updateScore(Country.POLAND, Country.URUGUAY, 0, 2);
+        liveMatches.updateScore(Country.POLAND, Country.URUGUAY, 0, 1);
 
         //then
         Match match = liveMatches.getMatchByTeamNames(Country.POLAND, Country.URUGUAY);
@@ -194,7 +194,7 @@ public class LiveMatchesTest {
         LiveMatches liveMatches = new LiveMatches();
 
         //when
-        MatchDoesNotExistException exception = assertThrows(MatchDoesNotExistException.class, () -> liveMatches.scoreAway(Country.POLAND, Country.URUGUAY));
+        MatchDoesNotExistException exception = assertThrows(MatchDoesNotExistException.class, () -> liveMatches.updateScore(Country.POLAND, Country.URUGUAY, 2, 2));
 
         //then
         assertEquals("Match does not exist", exception.getMessage());
@@ -213,7 +213,7 @@ public class LiveMatchesTest {
 
         liveMatches.updateScore(Country.MEXICO, Country.CANADA, 3, 0);
         liveMatches.updateScore(Country.GERMANY, Country.FRANCE, 0, 4);
-        liveMatches.updateScore(Country.ARGENTINA, Country.ARGENTINA, 3, 3);
+        liveMatches.updateScore(Country.ARGENTINA, Country.AUSTRALIA, 3, 3);
 
         //when
         Match match1 = liveMatches.getCurrentMatches().getFirst();
@@ -274,11 +274,12 @@ public class LiveMatchesTest {
         //given
         LiveMatches liveMatches = new LiveMatches();
 
-        createMatch(liveMatches, Country.MEXICO, Country.CANADA);
-        createMatch(liveMatches, Country.SPAIN, Country.BRAZIL);
-        createMatch(liveMatches, Country.GERMANY, Country.FRANCE);
-        createMatch(liveMatches, Country.URUGUAY, Country.ITALY);
-        createMatch(liveMatches, Country.ARGENTINA, Country.AUSTRALIA);
+        long timestamp = System.currentTimeMillis();
+        createMatch(liveMatches, Country.MEXICO, Country.CANADA, timestamp);
+        createMatch(liveMatches, Country.SPAIN, Country.BRAZIL, timestamp + 1);
+        createMatch(liveMatches, Country.GERMANY, Country.FRANCE, timestamp + 2);
+        createMatch(liveMatches, Country.URUGUAY, Country.ITALY, timestamp + 3);
+        createMatch(liveMatches, Country.ARGENTINA, Country.AUSTRALIA, timestamp + 4);
 
         liveMatches.updateScore(Country.MEXICO, Country.CANADA, 0, 5);
         liveMatches.updateScore(Country.SPAIN, Country.BRAZIL, 10, 2);
@@ -313,6 +314,14 @@ public class LiveMatchesTest {
 
     private static void createMatch(LiveMatches liveMatches, String home, String away) {
         Match match = new Match(home, away);
+        liveMatches.addMatch(match);
+    }
+
+
+    private static void createMatch(LiveMatches liveMatches, String home, String away, long timestamp) {
+        Date creationDate = new Date(timestamp);
+
+        Match match = new Match(home, away, creationDate);
         liveMatches.addMatch(match);
     }
 

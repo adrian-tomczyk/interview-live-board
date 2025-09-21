@@ -1,5 +1,7 @@
 package com.tomczyk.board.match;
 
+import com.tomczyk.board.match.exceptions.UpdateScoreNegativeValueException;
+
 import java.util.Date;
 import java.util.Objects;
 
@@ -20,18 +22,25 @@ public class Match {
     }
 
 
+    public Match(String home, String away, Date date) {
+        homeName = home;
+        awayName = away;
+        homeScore = 0;
+        awayScore = 0;
+        creationDate = date;
+    }
+
+
     public String getScore() {
         return String.format("%s - %s: %d-%d", homeName, awayName, homeScore, awayScore);
     }
 
 
-    public void scoreHome() {
-        homeScore++;
-    }
+    public void updateScore(Integer homeScore, Integer awayScore) {
+        if (homeScore < 0 || awayScore < 0) throw new UpdateScoreNegativeValueException();
 
-
-    public void scoreAway() {
-        awayScore++;
+        this.homeScore = homeScore;
+        this.awayScore = awayScore;
     }
 
 

@@ -1,5 +1,6 @@
 package com.tomczyk.board.match;
 
+import com.tomczyk.board.match.exceptions.UpdateScoreNegativeValueException;
 import com.tomczyk.board.utils.Country;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +27,7 @@ public class MatchTest {
         Match match = new Match(Country.MEXICO, Country.CANADA);
 
         //when
-        match.updateScore(1,0);
+        match.updateScore(1, 0);
 
         //then
         assertEquals("Mexico - Canada: 1-0", match.getScore());
@@ -39,7 +40,7 @@ public class MatchTest {
         Match match = new Match(Country.MEXICO, Country.CANADA);
 
         //when
-        match.updateScore(0,1);
+        match.updateScore(0, 1);
 
         //then
         assertEquals("Mexico - Canada: 0-1", match.getScore());
@@ -52,10 +53,12 @@ public class MatchTest {
         Match match = new Match(Country.MEXICO, Country.CANADA);
 
         //when
-        match.updateScore(-2,1);
+        UpdateScoreNegativeValueException exception = assertThrows(UpdateScoreNegativeValueException.class, () -> match.updateScore(-2, 1));
+
 
         //then
         assertEquals("Mexico - Canada: 0-0", match.getScore());
+        assertEquals("Negative value in update score function occurred", exception.getMessage());
     }
 
 
@@ -65,10 +68,11 @@ public class MatchTest {
         Match match = new Match(Country.MEXICO, Country.CANADA);
 
         //when
-        match.updateScore(2,-1);
+        UpdateScoreNegativeValueException exception = assertThrows(UpdateScoreNegativeValueException.class, () -> match.updateScore(2, -1));
 
         //then
         assertEquals("Mexico - Canada: 0-0", match.getScore());
+        assertEquals("Negative value in update score function occurred", exception.getMessage());
     }
 
 
@@ -118,11 +122,11 @@ public class MatchTest {
     void shouldCheckIfMatchesScoreEquals() {
         //given
         Match match1 = new Match(Country.CANADA, Country.MEXICO);
-        match1.updateScore(2,1);
+        match1.updateScore(2, 1);
 
 
         Match match2 = new Match(Country.CANADA, Country.MEXICO);
-        match2.updateScore(2,1);
+        match2.updateScore(2, 1);
 
 
         //when
@@ -137,11 +141,11 @@ public class MatchTest {
     void shouldCheckIfMatchesScoreDoesNotEquals() {
         //given
         Match match1 = new Match(Country.CANADA, Country.MEXICO);
-        match1.updateScore(2,1);
+        match1.updateScore(2, 1);
 
 
         Match match2 = new Match(Country.CANADA, Country.MEXICO);
-        match1.updateScore(2,3);
+        match1.updateScore(2, 3);
 
 
         //when
@@ -178,7 +182,7 @@ public class MatchTest {
     void shouldGetHomeScore() {
         //given
         Match match = new Match(Country.MEXICO, Country.CANADA);
-        match.updateScore(1,0);
+        match.updateScore(1, 0);
 
 
         //when
@@ -191,7 +195,7 @@ public class MatchTest {
     void shouldGetAwayScore() {
         //given
         Match match = new Match(Country.MEXICO, Country.CANADA);
-        match.updateScore(0,1);
+        match.updateScore(0, 1);
 
 
         //when

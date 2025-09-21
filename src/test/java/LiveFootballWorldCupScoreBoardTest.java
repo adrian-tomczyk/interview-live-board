@@ -82,10 +82,10 @@ public class LiveFootballWorldCupScoreBoardTest {
     public void shouldGetScoreBoardString() {
         //given
         Match match1 = new Match(Country.POLAND, Country.URUGUAY);
-        match1.updateScore(Country.POLAND, Country.URUGUAY, 1, 0);
+        match1.updateScore(1, 0);
 
         Match match2 = new Match(Country.MEXICO, Country.CANADA);
-        match1.updateScore(Country.POLAND, Country.URUGUAY, 1, 2);
+        match2.updateScore(0, 2);
 
 
         //when

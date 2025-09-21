@@ -15,12 +15,9 @@ public class Main {
         liveFootballWorldCupScoreBoard.startGame(POLAND, GERMANY);
         liveFootballWorldCupScoreBoard.startGame(SPAIN, FRANCE);
 
-        liveFootballWorldCupScoreBoard.scoreHome(POLAND, GERMANY);
-        liveFootballWorldCupScoreBoard.scoreHome(POLAND, GERMANY);
-        liveFootballWorldCupScoreBoard.scoreAway(POLAND, GERMANY);
+        liveFootballWorldCupScoreBoard.updateScore(POLAND, GERMANY, 2, 1);
 
-        liveFootballWorldCupScoreBoard.scoreHome(SPAIN, FRANCE);
-        liveFootballWorldCupScoreBoard.scoreAway(SPAIN, FRANCE);
+        liveFootballWorldCupScoreBoard.updateScore(SPAIN, FRANCE, 0, 2);
 
         System.out.println(liveFootballWorldCupScoreBoard.getScoreBoard());
 

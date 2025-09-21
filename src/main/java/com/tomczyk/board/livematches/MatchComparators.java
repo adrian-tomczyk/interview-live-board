@@ -8,8 +8,8 @@ public class MatchComparators {
     }
 
 
-    public static boolean wasCreatedLater(Match match1, Match match2) {
-        return match1.getCreationDate().after(match2.getCreationDate());
+    public static boolean wasCreatedBefore(Match match1, Match match2) {
+        return match1.getCreationDate().getTime() < match2.getCreationDate().getTime();
     }
 
 

@@ -40,23 +40,12 @@ public class LiveMatches {
     }
 
 
-    public void scoreHome(String home, String away) {
+    public void updateScore(String home, String away, Integer scoreHome, Integer scoreAway) {
         Match match = getMatchByTeamNames(home, away);
 
         MatchListVerifications.throwIfMatchDoesNotExist(match);
 
-        match.scoreHome();
-
-        sortMatches();
-    }
-
-
-    public void scoreAway(String home, String away) {
-        Match match = getMatchByTeamNames(home, away);
-
-        MatchListVerifications.throwIfMatchDoesNotExist(match);
-
-        match.scoreAway();
+        match.updateScore(scoreHome, scoreAway);
 
         sortMatches();
     }
@@ -70,7 +59,7 @@ public class LiveMatches {
     private void sortMatches() {
         matches.sort((match1, match2) -> {
             if (MatchComparators.isScoreSumLower(match1, match2)) return 1;
-            if (MatchComparators.isScoreSumEqual(match1, match2) && MatchComparators.wasCreatedLater(match1, match2))
+            if (MatchComparators.isScoreSumEqual(match1, match2) && MatchComparators.wasCreatedBefore(match1, match2))
                 return 1;
 
             return -1;

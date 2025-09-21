@@ -23,13 +23,8 @@ public class LiveFootballWorldCupScoreBoard {
     }
 
 
-    public void scoreHome(String home, String away) {
-        liveMatches.scoreHome(home, away);
-    }
-
-
-    public void scoreAway(String home, String away) {
-        liveMatches.scoreAway(home, away);
+    public void updateScore(String home, String away, Integer scoreHome, Integer scoreAway) {
+        liveMatches.updateScore(home, away, scoreHome, scoreAway);
     }
 
 
@@ -39,6 +34,5 @@ public class LiveFootballWorldCupScoreBoard {
                 .reduce("", (partialString, element) -> partialString + element + "\n")
                 .stripTrailing();
     }
-
 
 }
