@@ -2,27 +2,27 @@ package com.tomczyk.board.livematches;
 
 import com.tomczyk.board.match.Match;
 import com.tomczyk.board.match.MatchEvent;
-import com.tomczyk.board.match.MatchEventType;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class LiveMatches {
-    final ArrayList<OrderedMatchAdapter> matches;
-    private Integer matchesCount;
+    private final ArrayList<OrderedMatchAdapter> matches;
+    private Integer matchesAddedCounter;
 
 
     public LiveMatches() {
         matches = new ArrayList<>();
-        matchesCount = 0;
+        matchesAddedCounter = 0;
     }
 
 
     public void handleMatchEvent(MatchEvent matchEvent) throws Exception {
+        passMatchEvent(matchEvent);
+
         switch (matchEvent.matchEventType()) {
             case MATCH_STARTED -> addMatch(matchEvent);
             case MATCH_FINISHED -> finishMatch(matchEvent);
-            case AWAY_TEAM_SCORES, HOME_TEAM_SCORES -> passMatchEvent(matchEvent);
         }
     }
 
@@ -57,16 +57,15 @@ public class LiveMatches {
         throwIfMatchAlreadyExists(existingMatch);
 
         Match match = new Match(matchEvent.home(), matchEvent.away());
-        OrderedMatchAdapter orderedMatchAdapter = new OrderedMatchAdapter(match, matchesCount);
+
+        OrderedMatchAdapter orderedMatchAdapter = new OrderedMatchAdapter(match, matchesAddedCounter);
 
         matches.addLast(orderedMatchAdapter);
-        matchesCount++;
+        matchesAddedCounter++;
     }
 
 
     private void finishMatch(MatchEvent matchEvent) throws Exception {
-        throwIfUnexpectedEventType(List.of(MatchEventType.MATCH_FINISHED), matchEvent);
-
         OrderedMatchAdapter orderedMatchAdapter = getOrderedMatchAdapter(matchEvent.home(), matchEvent.away());
 
         throwIfMatchDoesNotExists(orderedMatchAdapter);
@@ -133,13 +132,6 @@ public class LiveMatches {
 
     private static int getOrderedMatchAdapterScoreSum(OrderedMatchAdapter orderedMatchAdapter) {
         return orderedMatchAdapter.match().getHomeScore() + orderedMatchAdapter.match().getAwayScore();
-    }
-
-
-    private static void throwIfUnexpectedEventType(List<MatchEventType> expectedMatchEventType, MatchEvent matchEvent) throws Exception {
-        if (!expectedMatchEventType.contains(matchEvent.matchEventType())) {
-            throw new Exception("MatchEventType mismatch - expected: " + expectedMatchEventType.stream().map(Enum::toString).toList() + " got: " + matchEvent.matchEventType().toString());
-        }
     }
 
 

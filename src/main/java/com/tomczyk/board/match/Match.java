@@ -69,6 +69,12 @@ public class Match {
     }
 
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(homeScore, awayScore, homeName, awayName);
+    }
+
+
     private boolean areEventTeamsEqual(MatchEvent matchEvent) {
         return homeName.equals(matchEvent.home()) && awayName.equals(matchEvent.away());
     }

@@ -8,7 +8,7 @@ import com.tomczyk.board.match.MatchEventType;
 public class LiveFootballWorldCupScoreBoard {
     private final LiveMatches liveMatches;
 
-    public LiveFootballWorldCupScoreBoard(LiveMatches liveMatches) {
+    public LiveFootballWorldCupScoreBoard(LiveMatches liveMatches){
         this.liveMatches = liveMatches;
     }
 

@@ -40,8 +40,9 @@ public class LiveFootballWorldCupScoreBoardTest {
         //then
         verify(liveMatches, times(1))
                 .handleMatchEvent(argThat(matchEvent ->
-                        matchEvent.home().equals(Country.POLAND) &&
-                                matchEvent.away().equals(Country.URUGUAY)));
+                        matchEvent.matchEventType() == MatchEventType.MATCH_STARTED &&
+                                Country.POLAND.equals(matchEvent.home()) &&
+                                Country.URUGUAY.equals(matchEvent.away())));
     }
 
 
@@ -54,10 +55,11 @@ public class LiveFootballWorldCupScoreBoardTest {
         liveFootballWorldCupScoreBoard.finishGame(Country.POLAND, Country.URUGUAY);
 
         //then
-        verify(liveMatches, times(1)).handleMatchEvent(argThat(matchEvent ->
-                matchEvent.matchEventType() == MatchEventType.MATCH_FINISHED &&
-                        matchEvent.home().equals(Country.POLAND) &&
-                        matchEvent.away().equals(Country.URUGUAY)));
+        verify(liveMatches, times(1))
+                .handleMatchEvent(argThat(matchEvent ->
+                        matchEvent.matchEventType() == MatchEventType.MATCH_FINISHED &&
+                                Country.POLAND.equals(matchEvent.home()) &&
+                                Country.URUGUAY.equals(matchEvent.away())));
     }
 
 
@@ -73,8 +75,8 @@ public class LiveFootballWorldCupScoreBoardTest {
         //then
         verify(liveMatches, times(1)).handleMatchEvent(argThat(matchEvent ->
                 matchEvent.matchEventType() == MatchEventType.HOME_TEAM_SCORES &&
-                        matchEvent.home().equals(Country.POLAND) &&
-                        matchEvent.away().equals(Country.URUGUAY)));
+                        Country.POLAND.equals(matchEvent.home()) &&
+                        Country.URUGUAY.equals(matchEvent.away())));
     }
 
 
@@ -90,8 +92,8 @@ public class LiveFootballWorldCupScoreBoardTest {
         //then
         verify(liveMatches, times(1)).handleMatchEvent(argThat(matchEvent ->
                 matchEvent.matchEventType() == MatchEventType.AWAY_TEAM_SCORES &&
-                        matchEvent.home().equals(Country.POLAND) &&
-                        matchEvent.away().equals(Country.URUGUAY)));
+                        Country.POLAND.equals(matchEvent.home()) &&
+                        Country.URUGUAY.equals(matchEvent.away())));
     }
 
 
