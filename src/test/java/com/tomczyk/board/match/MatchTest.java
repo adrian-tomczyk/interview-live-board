@@ -1,18 +1,17 @@
 package com.tomczyk.board.match;
 
+import com.tomczyk.board.utils.Country;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class MatchTest {
-    final String MEXICO = "Mexico";
-    final String CANADA = "Canada";
 
     @Test
     void shouldInitializeGameWithProperScore() {
         //given
         //when
-        Match match = new Match(MEXICO, CANADA);
+        Match match = new Match(Country.MEXICO, Country.CANADA);
 
         //then
         assertEquals("Mexico - Canada: 0-0", match.getScore());
@@ -23,7 +22,7 @@ public class MatchTest {
     @Test
     void shouldUpdateHomeScore() {
         //given
-        Match match = new Match(MEXICO, CANADA);
+        Match match = new Match(Country.MEXICO, Country.CANADA);
 
         //when
         match.scoreHome();
@@ -37,7 +36,7 @@ public class MatchTest {
     @Test
     void shouldUpdateAwayScore() {
         //given
-        Match match = new Match(MEXICO, CANADA);
+        Match match = new Match(Country.MEXICO, Country.CANADA);
 
         //when
         match.scoreAway();
@@ -50,8 +49,8 @@ public class MatchTest {
     @Test
     void shouldCompareTwoMatches() {
         //given
-        Match match1 = new Match(MEXICO, CANADA);
-        Match match2 = new Match(MEXICO, CANADA);
+        Match match1 = new Match(Country.MEXICO, Country.CANADA);
+        Match match2 = new Match(Country.MEXICO, Country.CANADA);
 
         //when
         boolean isEqual = match1.equals(match2);
@@ -64,8 +63,8 @@ public class MatchTest {
     @Test
     void shouldCheckIfMatchesHomeTeamDoesNotEqual() {
         //given
-        Match match1 = new Match(MEXICO, MEXICO);
-        Match match2 = new Match(CANADA, MEXICO);
+        Match match1 = new Match(Country.MEXICO, Country.MEXICO);
+        Match match2 = new Match(Country.CANADA, Country.MEXICO);
 
         //when
         boolean isEqual = match1.equals(match2);
@@ -78,8 +77,8 @@ public class MatchTest {
     @Test
     void shouldCheckIfMatchesAwayTeamDoesNotEqual() {
         //given
-        Match match1 = new Match(CANADA, CANADA);
-        Match match2 = new Match(CANADA, MEXICO);
+        Match match1 = new Match(Country.CANADA, Country.CANADA);
+        Match match2 = new Match(Country.CANADA, Country.MEXICO);
 
         //when
         boolean isEqual = match1.equals(match2);
@@ -92,12 +91,12 @@ public class MatchTest {
     @Test
     void shouldCheckIfMatchesScoreEquals() {
         //given
-        Match match1 = new Match(CANADA, MEXICO);
+        Match match1 = new Match(Country.CANADA, Country.MEXICO);
         match1.scoreAway();
         match1.scoreAway();
         match1.scoreHome();
 
-        Match match2 = new Match(CANADA, MEXICO);
+        Match match2 = new Match(Country.CANADA, Country.MEXICO);
         match2.scoreAway();
         match2.scoreAway();
         match2.scoreHome();
@@ -113,11 +112,11 @@ public class MatchTest {
     @Test
     void shouldCheckIfMatchesScoreDoesNotEquals() {
         //given
-        Match match1 = new Match(CANADA, MEXICO);
+        Match match1 = new Match(Country.CANADA, Country.MEXICO);
         match1.scoreAway();
         match1.scoreHome();
 
-        Match match2 = new Match(CANADA, MEXICO);
+        Match match2 = new Match(Country.CANADA, Country.MEXICO);
         match2.scoreAway();
         match2.scoreAway();
         match2.scoreHome();
@@ -133,29 +132,29 @@ public class MatchTest {
     @Test
     void shouldContainHomeName() {
         //given
-        Match match = new Match(MEXICO, CANADA);
+        Match match = new Match(Country.MEXICO, Country.CANADA);
 
         //when
         //then
-        assertEquals(MEXICO, match.getHomeName());
+        assertEquals(Country.MEXICO, match.getHomeName());
     }
 
 
     @Test
     void shouldContainAwayName() {
         //given
-        Match match = new Match(MEXICO, CANADA);
+        Match match = new Match(Country.MEXICO, Country.CANADA);
 
         //when
         //then
-        assertEquals(CANADA, match.getAwayName());
+        assertEquals(Country.CANADA, match.getAwayName());
     }
 
 
     @Test
     void shouldGetHomeScore() {
         //given
-        Match match = new Match(MEXICO, CANADA);
+        Match match = new Match(Country.MEXICO, Country.CANADA);
         match.scoreHome();
 
         //when
@@ -167,7 +166,7 @@ public class MatchTest {
     @Test
     void shouldGetAwayScore() {
         //given
-        Match match = new Match(MEXICO, CANADA);
+        Match match = new Match(Country.MEXICO, Country.CANADA);
         match.scoreAway();
 
         //when

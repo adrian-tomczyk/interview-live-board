@@ -1,26 +1,26 @@
 import com.tomczyk.board.LiveFootballWorldCupScoreBoard;
 import com.tomczyk.board.livematches.LiveMatches;
+import com.tomczyk.board.match.Match;
 import com.tomczyk.board.match.MatchEventType;
+import com.tomczyk.board.utils.Country;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 public class LiveFootballWorldCupScoreBoardTest {
-    final String POLAND = "Poland";
-    final String URUGUAY = "Uruguay";
-    final String MEXICO = "Mexico";
-    final String CANADA = "Canada";
 
     LiveFootballWorldCupScoreBoard liveFootballWorldCupScoreBoard;
 
     @Mock
-    @Spy
     LiveMatches liveMatches;
 
 
@@ -35,77 +35,80 @@ public class LiveFootballWorldCupScoreBoardTest {
         //given
 
         //when
-        liveFootballWorldCupScoreBoard.startGame(POLAND, URUGUAY);
+        liveFootballWorldCupScoreBoard.startGame(Country.POLAND, Country.URUGUAY);
 
         //then
         verify(liveMatches, times(1)).addMatch(argThat(matchEvent ->
                 matchEvent.matchEventType() == MatchEventType.MATCH_STARTED &&
-                        matchEvent.home().equals(POLAND) &&
-                        matchEvent.away().equals(URUGUAY)));
+                        matchEvent.home().equals(Country.POLAND) &&
+                        matchEvent.away().equals(Country.URUGUAY)));
     }
 
 
     @Test
     public void shouldFinishAGame() throws Exception {
         //given
-        liveFootballWorldCupScoreBoard.startGame(POLAND, URUGUAY);
+        liveFootballWorldCupScoreBoard.startGame(Country.POLAND, Country.URUGUAY);
 
         //when
-        liveFootballWorldCupScoreBoard.finishGame(POLAND, URUGUAY);
+        liveFootballWorldCupScoreBoard.finishGame(Country.POLAND, Country.URUGUAY);
 
         //then
-        verify(liveMatches, times(1)).finishGame(argThat(matchEvent ->
+        verify(liveMatches, times(1)).finishMatch(argThat(matchEvent ->
                 matchEvent.matchEventType() == MatchEventType.MATCH_FINISHED &&
-                        matchEvent.home().equals(POLAND) &&
-                        matchEvent.away().equals(URUGUAY)));
+                        matchEvent.home().equals(Country.POLAND) &&
+                        matchEvent.away().equals(Country.URUGUAY)));
     }
 
 
     @Test
     public void shouldUpdateHomeScore() throws Exception {
         //given
-        liveFootballWorldCupScoreBoard.startGame(POLAND, URUGUAY);
+        liveFootballWorldCupScoreBoard.startGame(Country.POLAND, Country.URUGUAY);
 
         //when
-        liveFootballWorldCupScoreBoard.updateScore(POLAND, URUGUAY, MatchEventType.HOME_TEAM_SCORES);
+        liveFootballWorldCupScoreBoard.updateScore(Country.POLAND, Country.URUGUAY, MatchEventType.HOME_TEAM_SCORES);
 
 
         //then
-        verify(liveMatches, times(1)).updateScore(argThat(matchEvent ->
+        verify(liveMatches, times(1)).updateMatchScore(argThat(matchEvent ->
                 matchEvent.matchEventType() == MatchEventType.HOME_TEAM_SCORES &&
-                        matchEvent.home().equals(POLAND) &&
-                        matchEvent.away().equals(URUGUAY)));
+                        matchEvent.home().equals(Country.POLAND) &&
+                        matchEvent.away().equals(Country.URUGUAY)));
     }
 
 
     @Test
-    public void shouldUpdateHomeScore() throws Exception {
+    public void shouldUpdateAwayScore() throws Exception {
         //given
-        liveFootballWorldCupScoreBoard.startGame(POLAND, URUGUAY);
+        liveFootballWorldCupScoreBoard.startGame(Country.POLAND, Country.URUGUAY);
 
         //when
-        liveFootballWorldCupScoreBoard.updateScore(POLAND, URUGUAY, MatchEventType.AWAY_TEAM_SCORES);
+        liveFootballWorldCupScoreBoard.updateScore(Country.POLAND, Country.URUGUAY, MatchEventType.AWAY_TEAM_SCORES);
 
 
         //then
-        verify(liveMatches, times(1)).updateScore(argThat(matchEvent ->
+        verify(liveMatches, times(1)).updateMatchScore(argThat(matchEvent ->
                 matchEvent.matchEventType() == MatchEventType.AWAY_TEAM_SCORES &&
-                        matchEvent.home().equals(POLAND) &&
-                        matchEvent.away().equals(URUGUAY)));
+                        matchEvent.home().equals(Country.POLAND) &&
+                        matchEvent.away().equals(Country.URUGUAY)));
     }
 
 
     @Test
-    public void shouldGetScoreBoardString() throws Exception {
+    public void shouldGetScoreBoardString() {
         //given
-        liveFootballWorldCupScoreBoard.startGame(POLAND, URUGUAY);
-        liveFootballWorldCupScoreBoard.startGame(MEXICO, CANADA);
+        Match match1 = new Match(Country.POLAND, Country.URUGUAY);
+        match1.scoreHome();
 
-        liveFootballWorldCupScoreBoard.updateScore(POLAND, URUGUAY, MatchEventType.HOME_TEAM_SCORES);
-        liveFootballWorldCupScoreBoard.updateScore(MEXICO, CANADA, MatchEventType.AWAY_TEAM_SCORES);
-        liveFootballWorldCupScoreBoard.updateScore(MEXICO, CANADA, MatchEventType.AWAY_TEAM_SCORES);
+        Match match2 = new Match(Country.MEXICO, Country.CANADA);
+        match2.scoreAway();
+        match2.scoreAway();
 
         //when
+        when(liveMatches.getCurrentMatches())
+                .thenReturn(List.of(match2,match1));
+
         String scoreBoard = liveFootballWorldCupScoreBoard.getScoreBoard();
 
         //then
