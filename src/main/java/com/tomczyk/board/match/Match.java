@@ -15,33 +15,41 @@ public class Match {
         awayScore = 0;
     }
 
+
     public String getScore() {
         return String.format("%s - %s: %d-%d", homeName, awayName, homeScore, awayScore);
     }
+
 
     public void scoreHome() {
         homeScore++;
     }
 
+
     public void scoreAway() {
         awayScore++;
     }
+
 
     public String getHomeName() {
         return homeName;
     }
 
+
     public String getAwayName() {
         return awayName;
     }
+
 
     public Integer getHomeScore() {
         return homeScore;
     }
 
+
     public Integer getAwayScore() {
         return awayScore;
     }
+
 
     @Override
     public boolean equals(Object o) {

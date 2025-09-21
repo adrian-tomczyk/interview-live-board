@@ -64,6 +64,7 @@ public class LiveMatchesTest {
         assertEquals(1, liveMatches.getCurrentMatches().size());
     }
 
+
     @Test
     public void shouldThrowExceptionWhenEventTypeMismatchOccursDuringAddingMatch() {
         //given
@@ -78,6 +79,7 @@ public class LiveMatchesTest {
         assertEquals("MatchEventType mismatch - expected: [MATCH_STARTED] got: MATCH_FINISHED", exception.getMessage());
     }
 
+
     @Test
     public void shouldAddMultipleMatchesToList() throws Exception {
         //given
@@ -90,6 +92,7 @@ public class LiveMatchesTest {
         //then
         assertEquals(2, liveMatches.getCurrentMatches().size());
     }
+
 
     @Test
     public void shouldGetAddedMatch() throws Exception {
@@ -105,6 +108,7 @@ public class LiveMatchesTest {
         assertEquals(URUGUAY, resMatch.getAwayName());
     }
 
+
     @Test
     public void shouldNotGetAddedMatchWhenDoesNotExists() {
         //given
@@ -116,6 +120,7 @@ public class LiveMatchesTest {
         //then
         assertNull(resMatch);
     }
+
 
     @Test
     public void shouldFinishMatch() throws Exception {
@@ -131,12 +136,12 @@ public class LiveMatchesTest {
         assertNull(resMatch);
     }
 
+
     @Test
     public void shouldThrowExceptionWhenEventTypeMismatchOccursDuringFinishingMatch() {
         //given
         LiveMatches liveMatches = new LiveMatches();
         MatchEvent matchEvent = new MatchEvent(MatchEventType.MATCH_STARTED, POLAND, URUGUAY);
-
 
         //when
         Exception exception = assertThrows(Exception.class, () -> liveMatches.finishMatch(matchEvent));
@@ -144,6 +149,7 @@ public class LiveMatchesTest {
         //then
         assertEquals("MatchEventType mismatch - expected: [MATCH_FINISHED] got: MATCH_STARTED", exception.getMessage());
     }
+
 
     @Test
     public void shouldFinishOnlyMatchingMatch() throws Exception {
@@ -167,6 +173,7 @@ public class LiveMatchesTest {
         assertEquals(EQUADOR, match3Res.getHomeName());
         assertEquals(URUGUAY, match3Res.getAwayName());
     }
+
 
     @Test
     public void shouldThrowExceptionWhenFinishingNotExistingMatch() throws Exception {
@@ -192,6 +199,7 @@ public class LiveMatchesTest {
         assertEquals(URUGUAY, resMatch2.getAwayName());
     }
 
+
     @Test
     public void shouldUpdateMatchHomeScore() throws Exception {
         //given
@@ -208,6 +216,7 @@ public class LiveMatchesTest {
         assertEquals(1, match.getHomeScore());
     }
 
+
     @Test
     public void shouldUpdateMatchHomeScoreTwice() throws Exception {
         //given
@@ -222,6 +231,7 @@ public class LiveMatchesTest {
         Match match = liveMatches.getMatch(POLAND, URUGUAY);
         assertEquals(2, match.getHomeScore());
     }
+
 
     @Test
     public void shouldUpdateMatchAwayScore() throws Exception {
@@ -239,6 +249,7 @@ public class LiveMatchesTest {
         assertEquals(1, match.getAwayScore());
     }
 
+
     @Test
     public void shouldUpdateMatchAwayScoreTwice() throws Exception {
         //given
@@ -255,6 +266,7 @@ public class LiveMatchesTest {
         assertEquals(2, match.getAwayScore());
     }
 
+
     @Test
     public void shouldThrowExceptionWhenEventTypeMismatchOccursOnUpdateScore() {
         //given
@@ -267,6 +279,7 @@ public class LiveMatchesTest {
         //then
         assertEquals("MatchEventType mismatch - expected: [HOME_TEAM_SCORES, AWAY_TEAM_SCORES] got: MATCH_STARTED", exception.getMessage());
     }
+
 
     @Test
     public void shouldOrderMatchesByHighestScoreSum() throws Exception {
@@ -306,6 +319,7 @@ public class LiveMatchesTest {
         assertEquals(POLAND, match4.getHomeName());
         assertEquals(URUGUAY, match4.getAwayName());
     }
+
 
     @Test
     public void shouldOrderMatchesByStartEvent() throws Exception {
@@ -390,15 +404,18 @@ public class LiveMatchesTest {
         assertEquals(FRANCE, match5.getAwayName());
     }
 
+
     private static void createMatch(LiveMatches liveMatches, String home, String away) throws Exception {
         MatchEvent matchEvent = new MatchEvent(MatchEventType.MATCH_STARTED, home, away);
         liveMatches.addMatch(matchEvent);
     }
 
+
     private static void finishMatch(LiveMatches liveMatches, String home, String away) throws Exception {
         MatchEvent matchEvent = new MatchEvent(MatchEventType.MATCH_FINISHED, home, away);
         liveMatches.finishMatch(matchEvent);
     }
+
 
     private static void repeatScoreEvent(LiveMatches liveMatches, int times, MatchEventType matchEventType, String home, String away) {
         IntStream.range(0, times).forEach(i -> {
@@ -410,6 +427,5 @@ public class LiveMatchesTest {
             }
         });
     }
-
 
 }

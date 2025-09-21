@@ -19,6 +19,7 @@ public class MatchTest {
 
     }
 
+
     @Test
     void shouldUpdateHomeScore() {
         //given
@@ -32,6 +33,7 @@ public class MatchTest {
 
     }
 
+
     @Test
     void shouldUpdateAwayScore() {
         //given
@@ -43,6 +45,7 @@ public class MatchTest {
         //then
         assertEquals("Mexico - Canada: 0-1", match.getScore());
     }
+
 
     @Test
     void shouldCompareTwoMatches() {
@@ -57,6 +60,7 @@ public class MatchTest {
         assertTrue(isEqual);
     }
 
+
     @Test
     void shouldCheckIfMatchesHomeTeamDoesNotEqual() {
         //given
@@ -70,6 +74,7 @@ public class MatchTest {
         assertFalse(isEqual);
     }
 
+
     @Test
     void shouldCheckIfMatchesAwayTeamDoesNotEqual() {
         //given
@@ -82,6 +87,7 @@ public class MatchTest {
         //then
         assertFalse(isEqual);
     }
+
 
     @Test
     void shouldCheckIfMatchesScoreEquals() {
@@ -123,6 +129,7 @@ public class MatchTest {
         assertFalse(isEqual);
     }
 
+
     @Test
     void shouldContainHomeName() {
         //given
@@ -132,6 +139,7 @@ public class MatchTest {
         //then
         assertEquals(MEXICO, match.getHomeName());
     }
+
 
     @Test
     void shouldContainAwayName() {
@@ -154,6 +162,7 @@ public class MatchTest {
         //then
         assertEquals(1, match.getHomeScore());
     }
+
 
     @Test
     void shouldGetAwayScore() {
