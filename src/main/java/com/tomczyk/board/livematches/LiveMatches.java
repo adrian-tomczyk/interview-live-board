@@ -18,31 +18,12 @@ public class LiveMatches {
     }
 
 
-    public void addMatch(MatchEvent matchEvent) throws Exception {
-        throwIfUnexpectedEventType(List.of(MatchEventType.MATCH_STARTED), matchEvent);
-
-        Match existingMatch = getMatch(matchEvent.home(), matchEvent.away());
-
-        if (existingMatch != null) {
-            throw new Exception("Match already exists");
+    public void handleMatchEvent(MatchEvent matchEvent) throws Exception {
+        switch (matchEvent.matchEventType()){
+            case MATCH_STARTED -> addMatch(matchEvent);
+            case MATCH_FINISHED -> finishMatch(matchEvent);
+            case AWAY_TEAM_SCORES, HOME_TEAM_SCORES -> passMatchEvent(matchEvent);
         }
-
-        Match match = new Match(matchEvent.home(), matchEvent.away());
-        OrderedMatchAdapter orderedMatchAdapter = new OrderedMatchAdapter(match,matchesCount);
-
-        matches.addLast(orderedMatchAdapter);
-        matchesCount++;
-    }
-
-
-    public void finishMatch(MatchEvent matchEvent) throws Exception {
-        throwIfUnexpectedEventType(List.of(MatchEventType.MATCH_FINISHED), matchEvent);
-
-        OrderedMatchAdapter orderedMatchAdapter = getOrderedMatchAdapter(matchEvent.home(), matchEvent.away());
-
-        throwIfMatchDoesNotExists(orderedMatchAdapter);
-
-        matches.remove(orderedMatchAdapter);
     }
 
 
@@ -59,38 +40,43 @@ public class LiveMatches {
     }
 
 
-    public void updateMatchScore(MatchEvent matchEvent) throws Exception {
-        throwIfUnexpectedEventType(List.of(MatchEventType.HOME_TEAM_SCORES, MatchEventType.AWAY_TEAM_SCORES), matchEvent);
-
+    private void passMatchEvent(MatchEvent matchEvent) throws Exception {
         OrderedMatchAdapter orderedMatchAdapter = getOrderedMatchAdapter(matchEvent.home(), matchEvent.away());
 
         throwIfMatchDoesNotExists(orderedMatchAdapter);
 
-        switch (matchEvent.matchEventType()) {
-            case HOME_TEAM_SCORES -> orderedMatchAdapter.match().scoreHome();
-            case AWAY_TEAM_SCORES -> orderedMatchAdapter.match().scoreAway();
-        }
+        orderedMatchAdapter.match().handleMatchEvent(matchEvent);
 
         updateMatchPosition(orderedMatchAdapter);
     }
 
 
+    private void addMatch(MatchEvent matchEvent) throws Exception {
+        OrderedMatchAdapter existingMatch = getOrderedMatchAdapter(matchEvent.home(), matchEvent.away());
+
+        throwIfMatchAlreadyExists(existingMatch);
+
+        Match match = new Match(matchEvent.home(), matchEvent.away());
+        OrderedMatchAdapter orderedMatchAdapter = new OrderedMatchAdapter(match, matchesCount);
+
+        matches.addLast(orderedMatchAdapter);
+        matchesCount++;
+    }
+
+
+    private void finishMatch(MatchEvent matchEvent) throws Exception {
+        throwIfUnexpectedEventType(List.of(MatchEventType.MATCH_FINISHED), matchEvent);
+
+        OrderedMatchAdapter orderedMatchAdapter = getOrderedMatchAdapter(matchEvent.home(), matchEvent.away());
+
+        throwIfMatchDoesNotExists(orderedMatchAdapter);
+
+        matches.remove(orderedMatchAdapter);
+    }
+
+
     private boolean areTeamsEqual(OrderedMatchAdapter orderedMatchAdapter, String home, String away) {
         return orderedMatchAdapter.match().getHomeName().equals(home) && orderedMatchAdapter.match().getAwayName().equals(away);
-    }
-
-
-    private static void throwIfUnexpectedEventType(List<MatchEventType> expectedMatchEventType, MatchEvent matchEvent) throws Exception {
-        if (!expectedMatchEventType.contains(matchEvent.matchEventType())) {
-            throw new Exception("MatchEventType mismatch - expected: " + expectedMatchEventType.stream().map(Enum::toString).toList() + " got: " + matchEvent.matchEventType().toString());
-        }
-    }
-
-
-    private static void throwIfMatchDoesNotExists(OrderedMatchAdapter orderedMatchAdapter) throws Exception {
-        if (orderedMatchAdapter == null) {
-            throw new Exception("Match does not exists");
-        }
     }
 
 
@@ -149,6 +135,26 @@ public class LiveMatches {
         return orderedMatchAdapter.match().getHomeScore() + orderedMatchAdapter.match().getAwayScore();
     }
 
+
+    private static void throwIfUnexpectedEventType(List<MatchEventType> expectedMatchEventType, MatchEvent matchEvent) throws Exception {
+        if (!expectedMatchEventType.contains(matchEvent.matchEventType())) {
+            throw new Exception("MatchEventType mismatch - expected: " + expectedMatchEventType.stream().map(Enum::toString).toList() + " got: " + matchEvent.matchEventType().toString());
+        }
+    }
+
+
+    private static void throwIfMatchDoesNotExists(OrderedMatchAdapter orderedMatchAdapter) throws Exception {
+        if (orderedMatchAdapter == null) {
+            throw new Exception("Match does not exists");
+        }
+    }
+
+
+    private static void throwIfMatchAlreadyExists(OrderedMatchAdapter existingMatch) throws Exception {
+        if (existingMatch != null) {
+            throw new Exception("Match already exists");
+        }
+    }
 }
 
 

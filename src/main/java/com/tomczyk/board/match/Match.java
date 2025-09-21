@@ -51,9 +51,33 @@ public class Match {
     }
 
 
+    public void handleMatchEvent(MatchEvent matchEvent) throws Exception {
+        throwIfEventTeamsDoesNotEqual(matchEvent);
+
+        switch (matchEvent.matchEventType()) {
+            case HOME_TEAM_SCORES -> scoreHome();
+            case AWAY_TEAM_SCORES -> scoreAway();
+            default -> System.out.println("Unexpected event type: " + matchEvent.matchEventType().name());
+        }
+    }
+
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Match match)) return false;
         return Objects.equals(homeScore, match.homeScore) && Objects.equals(awayScore, match.awayScore) && Objects.equals(homeName, match.homeName) && Objects.equals(awayName, match.awayName);
     }
+
+
+    private boolean areEventTeamsEqual(MatchEvent matchEvent) {
+        return homeName.equals(matchEvent.home()) && awayName.equals(matchEvent.away());
+    }
+
+
+    private void throwIfEventTeamsDoesNotEqual(MatchEvent matchEvent) throws Exception {
+        if (!areEventTeamsEqual(matchEvent)) {
+            throw new Exception("Match teams do not match");
+        }
+    }
+
 }

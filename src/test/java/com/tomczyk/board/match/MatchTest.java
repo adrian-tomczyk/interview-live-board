@@ -20,7 +20,7 @@ public class MatchTest {
 
 
     @Test
-    void shouldUpdateHomeScore() {
+    void shouldUpdateHomeScore() throws Exception {
         //given
         Match match = new Match(Country.MEXICO, Country.CANADA);
         MatchEvent matchEvent = new MatchEvent(MatchEventType.HOME_TEAM_SCORES, Country.MEXICO, Country.CANADA);
@@ -34,7 +34,7 @@ public class MatchTest {
 
 
     @Test
-    void shouldUpdateAwayScore() {
+    void shouldUpdateAwayScore() throws Exception {
         //given
         Match match = new Match(Country.MEXICO, Country.CANADA);
         MatchEvent matchEvent = new MatchEvent(MatchEventType.AWAY_TEAM_SCORES, Country.MEXICO, Country.CANADA);

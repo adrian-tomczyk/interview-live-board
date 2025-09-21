@@ -39,9 +39,9 @@ public class LiveFootballWorldCupScoreBoardTest {
 
         //then
         verify(liveMatches, times(1))
-                .addMatch(argThat(match ->
-                        match.getHomeName().equals(Country.POLAND) &&
-                                match.getAwayName().equals(Country.URUGUAY)));
+                .handleMatchEvent(argThat(matchEvent ->
+                        matchEvent.home().equals(Country.POLAND) &&
+                                matchEvent.away().equals(Country.URUGUAY)));
     }
 
 
@@ -54,7 +54,7 @@ public class LiveFootballWorldCupScoreBoardTest {
         liveFootballWorldCupScoreBoard.finishGame(Country.POLAND, Country.URUGUAY);
 
         //then
-        verify(liveMatches, times(1)).finishMatch(argThat(matchEvent ->
+        verify(liveMatches, times(1)).handleMatchEvent(argThat(matchEvent ->
                 matchEvent.matchEventType() == MatchEventType.MATCH_FINISHED &&
                         matchEvent.home().equals(Country.POLAND) &&
                         matchEvent.away().equals(Country.URUGUAY)));
@@ -67,11 +67,11 @@ public class LiveFootballWorldCupScoreBoardTest {
         liveFootballWorldCupScoreBoard.startGame(Country.POLAND, Country.URUGUAY);
 
         //when
-        liveFootballWorldCupScoreBoard.updateScore(Country.POLAND, Country.URUGUAY, MatchEventType.HOME_TEAM_SCORES);
+        liveFootballWorldCupScoreBoard.passMatchEvent(Country.POLAND, Country.URUGUAY, MatchEventType.HOME_TEAM_SCORES);
 
 
         //then
-        verify(liveMatches, times(1)).passMatchEvent(argThat(matchEvent ->
+        verify(liveMatches, times(1)).handleMatchEvent(argThat(matchEvent ->
                 matchEvent.matchEventType() == MatchEventType.HOME_TEAM_SCORES &&
                         matchEvent.home().equals(Country.POLAND) &&
                         matchEvent.away().equals(Country.URUGUAY)));
@@ -84,11 +84,11 @@ public class LiveFootballWorldCupScoreBoardTest {
         liveFootballWorldCupScoreBoard.startGame(Country.POLAND, Country.URUGUAY);
 
         //when
-        liveFootballWorldCupScoreBoard.updateScore(Country.POLAND, Country.URUGUAY, MatchEventType.AWAY_TEAM_SCORES);
+        liveFootballWorldCupScoreBoard.passMatchEvent(Country.POLAND, Country.URUGUAY, MatchEventType.AWAY_TEAM_SCORES);
 
 
         //then
-        verify(liveMatches, times(1)).passMatchEvent(argThat(matchEvent ->
+        verify(liveMatches, times(1)).handleMatchEvent(argThat(matchEvent ->
                 matchEvent.matchEventType() == MatchEventType.AWAY_TEAM_SCORES &&
                         matchEvent.home().equals(Country.POLAND) &&
                         matchEvent.away().equals(Country.URUGUAY)));
