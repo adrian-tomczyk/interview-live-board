@@ -54,7 +54,7 @@ public class MatchTest {
         MatchEvent matchEvent = new MatchEvent(MatchEventType.AWAY_TEAM_SCORES, Country.POLAND, Country.CANADA);
 
         //when
-        Exception exception = assertThrows(Exception.class, ()-> match.handleMatchEvent(matchEvent));
+        Exception exception = assertThrows(Exception.class, () -> match.handleMatchEvent(matchEvent));
 
         //then
         assertEquals("Match teams do not match", exception.getMessage());
@@ -68,7 +68,7 @@ public class MatchTest {
         MatchEvent matchEvent = new MatchEvent(MatchEventType.AWAY_TEAM_SCORES, Country.MEXICO, Country.POLAND);
 
         //when
-        Exception exception = assertThrows(Exception.class, ()-> match.handleMatchEvent(matchEvent));
+        Exception exception = assertThrows(Exception.class, () -> match.handleMatchEvent(matchEvent));
 
         //then
         assertEquals("Match teams do not match", exception.getMessage());

@@ -17,7 +17,7 @@ public class Main {
         liveFootballWorldCupScoreBoard.startGame(SPAIN, FRANCE);
 
         liveFootballWorldCupScoreBoard.passMatchEvent(POLAND, GERMANY, MatchEventType.HOME_TEAM_SCORES);
-        liveFootballWorldCupScoreBoard.passMatchEvent( POLAND, GERMANY, MatchEventType.HOME_TEAM_SCORES);
+        liveFootballWorldCupScoreBoard.passMatchEvent(POLAND, GERMANY, MatchEventType.HOME_TEAM_SCORES);
         liveFootballWorldCupScoreBoard.passMatchEvent(POLAND, GERMANY, MatchEventType.AWAY_TEAM_SCORES);
 
         liveFootballWorldCupScoreBoard.passMatchEvent(SPAIN, FRANCE, MatchEventType.HOME_TEAM_SCORES);

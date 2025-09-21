@@ -1,9 +1,9 @@
 package com.tomczyk.board.livematches;
 
-import com.tomczyk.board.utils.Country;
 import com.tomczyk.board.match.Match;
 import com.tomczyk.board.match.MatchEvent;
 import com.tomczyk.board.match.MatchEventType;
+import com.tomczyk.board.utils.Country;
 import org.junit.jupiter.api.Test;
 
 import java.util.stream.IntStream;

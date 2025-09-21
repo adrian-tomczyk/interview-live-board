@@ -19,7 +19,7 @@ public class LiveMatches {
 
 
     public void handleMatchEvent(MatchEvent matchEvent) throws Exception {
-        switch (matchEvent.matchEventType()){
+        switch (matchEvent.matchEventType()) {
             case MATCH_STARTED -> addMatch(matchEvent);
             case MATCH_FINISHED -> finishMatch(matchEvent);
             case AWAY_TEAM_SCORES, HOME_TEAM_SCORES -> passMatchEvent(matchEvent);
@@ -33,10 +33,10 @@ public class LiveMatches {
 
 
     public Match getMatch(String home, String away) {
-        OrderedMatchAdapter orderedMatchAdapter = getOrderedMatchAdapter(home,away);
-        if(orderedMatchAdapter == null) return null;
+        OrderedMatchAdapter orderedMatchAdapter = getOrderedMatchAdapter(home, away);
+        if (orderedMatchAdapter == null) return null;
 
-        return getOrderedMatchAdapter(home,away).match();
+        return getOrderedMatchAdapter(home, away).match();
     }
 
 
@@ -100,10 +100,10 @@ public class LiveMatches {
         int currentIndex = matches.indexOf(orderedMatchAdapter);
         if (currentIndex == 0) return 0;
 
-        for (int i = 0; i < currentIndex; ++i) {
+        for (int i = currentIndex - 1; i >= 0; --i) {
             OrderedMatchAdapter matchAtIndex = matches.get(i);
 
-            if(shouldMatchBeInsertedAtPosition(orderedMatchAdapter, matchAtIndex)) return i;
+            if (shouldMatchBeInsertedAtPosition(orderedMatchAdapter, matchAtIndex)) return i;
         }
 
         return currentIndex;
