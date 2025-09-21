@@ -28,7 +28,6 @@ public class LiveMatchesTest {
         //given
         LiveMatches liveMatches = new LiveMatches();
 
-
         //when
         createMatch(liveMatches, Country.POLAND, Country.URUGUAY);
 
@@ -61,7 +60,7 @@ public class LiveMatchesTest {
 
 
         //when
-        Exception exception = assertThrows(Exception.class, () -> liveMatches.addMatch(matchEvent));
+        Exception exception = assertThrows(Exception.class, () -> liveMatches.handleMatchEvent(matchEvent));
 
         //then
         assertEquals("MatchEventType mismatch - expected: [MATCH_STARTED] got: MATCH_FINISHED", exception.getMessage());
@@ -132,7 +131,7 @@ public class LiveMatchesTest {
         MatchEvent matchEvent = new MatchEvent(MatchEventType.MATCH_STARTED, Country.POLAND, Country.URUGUAY);
 
         //when
-        Exception exception = assertThrows(Exception.class, () -> liveMatches.finishMatch(matchEvent));
+        Exception exception = assertThrows(Exception.class, () -> liveMatches.handleMatchEvent(matchEvent));
 
         //then
         assertEquals("MatchEventType mismatch - expected: [MATCH_FINISHED] got: MATCH_STARTED", exception.getMessage());
@@ -174,7 +173,7 @@ public class LiveMatchesTest {
         MatchEvent finishMatchEvent1 = new MatchEvent(MatchEventType.MATCH_FINISHED, Country.GERMANY, Country.URUGUAY);
 
         //when
-        Exception exception = assertThrows(Exception.class, () -> liveMatches.finishMatch(finishMatchEvent1));
+        Exception exception = assertThrows(Exception.class, () -> liveMatches.handleMatchEvent(finishMatchEvent1));
         Match resMatch1 = liveMatches.getMatch(Country.POLAND, Country.EQUADOR);
         Match resMatch2 = liveMatches.getMatch(Country.POLAND, Country.URUGUAY);
 
@@ -197,7 +196,7 @@ public class LiveMatchesTest {
 
         //when
         MatchEvent matchHomeScoreEvent = new MatchEvent(MatchEventType.HOME_TEAM_SCORES, Country.POLAND, Country.URUGUAY);
-        liveMatches.updateMatchScore(matchHomeScoreEvent);
+        liveMatches.passMatchEvent(matchHomeScoreEvent);
 
         //then
         Match match = liveMatches.getMatch(Country.POLAND, Country.URUGUAY);
@@ -230,7 +229,7 @@ public class LiveMatchesTest {
 
         //when
         MatchEvent matchAwayScoreEvent = new MatchEvent(MatchEventType.AWAY_TEAM_SCORES, Country.POLAND, Country.URUGUAY);
-        liveMatches.updateMatchScore(matchAwayScoreEvent);
+        liveMatches.passMatchEvent(matchAwayScoreEvent);
 
         //then
         Match match = liveMatches.getMatch(Country.POLAND, Country.URUGUAY);
@@ -256,13 +255,14 @@ public class LiveMatchesTest {
 
 
     @Test
-    public void shouldThrowExceptionWhenEventTypeMismatchOccursOnUpdateScore() {
+    public void shouldThrowExceptionWhenEventTypeMismatchOccursOnUpdateScore() throws Exception {
         //given
         LiveMatches liveMatches = new LiveMatches();
-        MatchEvent matchEvent = new MatchEvent(MatchEventType.MATCH_STARTED, Country.POLAND, Country.URUGUAY);
+        createMatch(liveMatches, Country.POLAND ,Country.URUGUAY );
 
+        MatchEvent matchEvent = new MatchEvent(MatchEventType.MATCH_STARTED, Country.POLAND, Country.URUGUAY);
         //when
-        Exception exception = assertThrows(Exception.class, () -> liveMatches.updateMatchScore(matchEvent));
+        Exception exception = assertThrows(Exception.class, () -> liveMatches.passMatchEvent(matchEvent));
 
         //then
         assertEquals("MatchEventType mismatch - expected: [HOME_TEAM_SCORES, AWAY_TEAM_SCORES] got: MATCH_STARTED", exception.getMessage());
@@ -276,7 +276,7 @@ public class LiveMatchesTest {
         MatchEvent matchEvent = new MatchEvent(MatchEventType.AWAY_TEAM_SCORES, Country.POLAND, Country.URUGUAY);
 
         //when
-        Exception exception = assertThrows(Exception.class, () -> liveMatches.updateMatchScore(matchEvent));
+        Exception exception = assertThrows(Exception.class, () -> liveMatches.passMatchEvent(matchEvent));
 
         //then
         assertEquals("Match does not exists", exception.getMessage());
@@ -409,13 +409,13 @@ public class LiveMatchesTest {
 
     private static void createMatch(LiveMatches liveMatches, String home, String away) throws Exception {
         MatchEvent matchEvent = new MatchEvent(MatchEventType.MATCH_STARTED, home, away);
-        liveMatches.addMatch(matchEvent);
+        liveMatches.handleMatchEvent(matchEvent);
     }
 
 
     private static void finishMatch(LiveMatches liveMatches, String home, String away) throws Exception {
         MatchEvent matchEvent = new MatchEvent(MatchEventType.MATCH_FINISHED, home, away);
-        liveMatches.finishMatch(matchEvent);
+        liveMatches.handleMatchEvent(matchEvent);
     }
 
 
@@ -423,7 +423,7 @@ public class LiveMatchesTest {
         IntStream.range(0, times).forEach(i -> {
             MatchEvent matchEvent = new MatchEvent(matchEventType, home, away);
             try {
-                liveMatches.updateMatchScore(matchEvent);
+                liveMatches.passMatchEvent(matchEvent);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

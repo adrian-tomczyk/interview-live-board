@@ -38,10 +38,10 @@ public class LiveFootballWorldCupScoreBoardTest {
         liveFootballWorldCupScoreBoard.startGame(Country.POLAND, Country.URUGUAY);
 
         //then
-        verify(liveMatches, times(1)).addMatch(argThat(matchEvent ->
-                matchEvent.matchEventType() == MatchEventType.MATCH_STARTED &&
-                        matchEvent.home().equals(Country.POLAND) &&
-                        matchEvent.away().equals(Country.URUGUAY)));
+        verify(liveMatches, times(1))
+                .addMatch(argThat(match ->
+                        match.getHomeName().equals(Country.POLAND) &&
+                                match.getAwayName().equals(Country.URUGUAY)));
     }
 
 
@@ -71,7 +71,7 @@ public class LiveFootballWorldCupScoreBoardTest {
 
 
         //then
-        verify(liveMatches, times(1)).updateMatchScore(argThat(matchEvent ->
+        verify(liveMatches, times(1)).passMatchEvent(argThat(matchEvent ->
                 matchEvent.matchEventType() == MatchEventType.HOME_TEAM_SCORES &&
                         matchEvent.home().equals(Country.POLAND) &&
                         matchEvent.away().equals(Country.URUGUAY)));
@@ -88,7 +88,7 @@ public class LiveFootballWorldCupScoreBoardTest {
 
 
         //then
-        verify(liveMatches, times(1)).updateMatchScore(argThat(matchEvent ->
+        verify(liveMatches, times(1)).passMatchEvent(argThat(matchEvent ->
                 matchEvent.matchEventType() == MatchEventType.AWAY_TEAM_SCORES &&
                         matchEvent.home().equals(Country.POLAND) &&
                         matchEvent.away().equals(Country.URUGUAY)));
@@ -107,7 +107,7 @@ public class LiveFootballWorldCupScoreBoardTest {
 
         //when
         when(liveMatches.getCurrentMatches())
-                .thenReturn(List.of(match2,match1));
+                .thenReturn(List.of(match2, match1));
 
         String scoreBoard = liveFootballWorldCupScoreBoard.getScoreBoard();
 
