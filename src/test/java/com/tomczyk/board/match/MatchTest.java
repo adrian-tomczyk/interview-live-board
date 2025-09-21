@@ -25,10 +25,9 @@ public class MatchTest {
     void shouldUpdateHomeScore() {
         //given
         Match match = new Match(Country.MEXICO, Country.CANADA);
-        MatchEvent matchEvent = new MatchEvent(MatchEventType.HOME_TEAM_SCORES, Country.MEXICO, Country.CANADA);
 
         //when
-        match.handleMatchEvent(matchEvent);
+        match.scoreHome();
 
         //then
         assertEquals("Mexico - Canada: 1-0", match.getScore());
@@ -39,41 +38,12 @@ public class MatchTest {
     void shouldUpdateAwayScore() {
         //given
         Match match = new Match(Country.MEXICO, Country.CANADA);
-        MatchEvent matchEvent = new MatchEvent(MatchEventType.AWAY_TEAM_SCORES, Country.MEXICO, Country.CANADA);
 
         //when
-        match.handleMatchEvent(matchEvent);
+        match.scoreAway();
 
         //then
         assertEquals("Mexico - Canada: 0-1", match.getScore());
-    }
-
-
-    @Test
-    void shouldThrowExceptionWhenEventHasWrongHomeTeam() {
-        //given
-        Match match = new Match(Country.MEXICO, Country.CANADA);
-        MatchEvent matchEvent = new MatchEvent(MatchEventType.AWAY_TEAM_SCORES, Country.POLAND, Country.CANADA);
-
-        //when
-        MatchTeamsDoNotMatchException exception = assertThrows(MatchTeamsDoNotMatchException.class, () -> match.handleMatchEvent(matchEvent));
-
-        //then
-        assertEquals("Match teams do not match", exception.getMessage());
-    }
-
-
-    @Test
-    void shouldThrowExceptionWhenEventHasWrongAwayTeam() {
-        //given
-        Match match = new Match(Country.MEXICO, Country.CANADA);
-        MatchEvent matchEvent = new MatchEvent(MatchEventType.AWAY_TEAM_SCORES, Country.MEXICO, Country.POLAND);
-
-        //when
-        MatchTeamsDoNotMatchException exception = assertThrows(MatchTeamsDoNotMatchException.class, () -> match.handleMatchEvent(matchEvent));
-
-        //then
-        assertEquals("Match teams do not match", exception.getMessage());
     }
 
 

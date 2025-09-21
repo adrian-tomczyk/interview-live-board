@@ -1,7 +1,6 @@
 import com.tomczyk.board.LiveFootballWorldCupScoreBoard;
 import com.tomczyk.board.livematches.LiveMatches;
 import com.tomczyk.board.match.Match;
-import com.tomczyk.board.match.MatchEventType;
 import com.tomczyk.board.utils.Country;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,11 +37,9 @@ public class LiveFootballWorldCupScoreBoardTest {
         liveFootballWorldCupScoreBoard.startGame(Country.POLAND, Country.URUGUAY);
 
         //then
-        verify(liveMatches, times(1))
-                .handleMatchEvent(argThat(matchEvent ->
-                        matchEvent.matchEventType() == MatchEventType.MATCH_STARTED &&
-                                Country.POLAND.equals(matchEvent.home()) &&
-                                Country.URUGUAY.equals(matchEvent.away())));
+        verify(liveMatches, times(1)).addMatch(argThat(match ->
+                Country.POLAND.equals(match.getHomeName()) && Country.URUGUAY.equals(match.getAwayName())
+        ));
     }
 
 
@@ -55,11 +52,10 @@ public class LiveFootballWorldCupScoreBoardTest {
         liveFootballWorldCupScoreBoard.finishGame(Country.POLAND, Country.URUGUAY);
 
         //then
-        verify(liveMatches, times(1))
-                .handleMatchEvent(argThat(matchEvent ->
-                        matchEvent.matchEventType() == MatchEventType.MATCH_FINISHED &&
-                                Country.POLAND.equals(matchEvent.home()) &&
-                                Country.URUGUAY.equals(matchEvent.away())));
+        verify(liveMatches, times(1)).finishMatch(
+                argThat((home) -> Country.POLAND.equals(home)),
+                argThat((away) -> Country.URUGUAY.equals(away))
+        );
     }
 
 
@@ -69,14 +65,14 @@ public class LiveFootballWorldCupScoreBoardTest {
         liveFootballWorldCupScoreBoard.startGame(Country.POLAND, Country.URUGUAY);
 
         //when
-        liveFootballWorldCupScoreBoard.passMatchEvent(Country.POLAND, Country.URUGUAY, MatchEventType.HOME_TEAM_SCORES);
+        liveFootballWorldCupScoreBoard.scoreHome(Country.POLAND, Country.URUGUAY);
 
 
         //then
-        verify(liveMatches, times(1)).handleMatchEvent(argThat(matchEvent ->
-                matchEvent.matchEventType() == MatchEventType.HOME_TEAM_SCORES &&
-                        Country.POLAND.equals(matchEvent.home()) &&
-                        Country.URUGUAY.equals(matchEvent.away())));
+        verify(liveMatches, times(1)).scoreHome(
+                argThat((home) -> Country.POLAND.equals(home)),
+                argThat((away) -> Country.URUGUAY.equals(away))
+        );
     }
 
 
@@ -86,14 +82,14 @@ public class LiveFootballWorldCupScoreBoardTest {
         liveFootballWorldCupScoreBoard.startGame(Country.POLAND, Country.URUGUAY);
 
         //when
-        liveFootballWorldCupScoreBoard.passMatchEvent(Country.POLAND, Country.URUGUAY, MatchEventType.AWAY_TEAM_SCORES);
+        liveFootballWorldCupScoreBoard.scoreAway(Country.POLAND, Country.URUGUAY);
 
 
         //then
-        verify(liveMatches, times(1)).handleMatchEvent(argThat(matchEvent ->
-                matchEvent.matchEventType() == MatchEventType.AWAY_TEAM_SCORES &&
-                        Country.POLAND.equals(matchEvent.home()) &&
-                        Country.URUGUAY.equals(matchEvent.away())));
+        verify(liveMatches, times(1)).scoreAway(
+                argThat((home) -> Country.POLAND.equals(home)),
+                argThat((away) -> Country.URUGUAY.equals(away))
+        );
     }
 
 

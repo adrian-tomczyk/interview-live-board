@@ -4,8 +4,6 @@ import com.tomczyk.board.match.exceptions.MatchAlreadyExistsException;
 import com.tomczyk.board.match.exceptions.MatchDoesNotExistException;
 import com.tomczyk.board.utils.Country;
 import com.tomczyk.board.match.Match;
-import com.tomczyk.board.match.MatchEvent;
-import com.tomczyk.board.match.MatchEventType;
 import org.junit.jupiter.api.Test;
 
 import java.util.stream.IntStream;
@@ -75,7 +73,7 @@ public class LiveMatchesTest {
         createMatch(liveMatches, Country.POLAND, Country.URUGUAY);
 
         //when
-        Match resMatch = liveMatches.getMatch(Country.POLAND, Country.URUGUAY);
+        Match resMatch = liveMatches.getMatchByTeamNames(Country.POLAND, Country.URUGUAY);
 
         //then
         assertEquals(Country.POLAND, resMatch.getHomeName());
@@ -89,7 +87,7 @@ public class LiveMatchesTest {
         LiveMatches liveMatches = new LiveMatches();
 
         //when
-        Match resMatch = liveMatches.getMatch(Country.POLAND, Country.URUGUAY);
+        Match resMatch = liveMatches.getMatchByTeamNames(Country.POLAND, Country.URUGUAY);
 
         //then
         assertNull(resMatch);
@@ -104,7 +102,7 @@ public class LiveMatchesTest {
 
         //when
         finishMatch(liveMatches, Country.POLAND, Country.URUGUAY);
-        Match resMatch = liveMatches.getMatch(Country.POLAND, Country.URUGUAY);
+        Match resMatch = liveMatches.getMatchByTeamNames(Country.POLAND, Country.URUGUAY);
 
         //then
         assertNull(resMatch);
@@ -122,9 +120,9 @@ public class LiveMatchesTest {
         //when
         finishMatch(liveMatches, Country.POLAND, Country.URUGUAY);
 
-        Match finishedMatch = liveMatches.getMatch(Country.POLAND, Country.URUGUAY);
-        Match match1Res = liveMatches.getMatch(Country.POLAND, Country.EQUADOR);
-        Match match3Res = liveMatches.getMatch(Country.EQUADOR, Country.URUGUAY);
+        Match finishedMatch = liveMatches.getMatchByTeamNames(Country.POLAND, Country.URUGUAY);
+        Match match1Res = liveMatches.getMatchByTeamNames(Country.POLAND, Country.EQUADOR);
+        Match match3Res = liveMatches.getMatchByTeamNames(Country.EQUADOR, Country.URUGUAY);
 
         //then
         assertNull(finishedMatch);
@@ -143,12 +141,10 @@ public class LiveMatchesTest {
         createMatch(liveMatches, Country.POLAND, Country.EQUADOR);
         createMatch(liveMatches, Country.POLAND, Country.URUGUAY);
 
-        MatchEvent finishMatchEvent1 = new MatchEvent(MatchEventType.MATCH_FINISHED, Country.GERMANY, Country.URUGUAY);
-
         //when
-        MatchDoesNotExistException exception = assertThrows(MatchDoesNotExistException.class, () -> liveMatches.handleMatchEvent(finishMatchEvent1));
-        Match resMatch1 = liveMatches.getMatch(Country.POLAND, Country.EQUADOR);
-        Match resMatch2 = liveMatches.getMatch(Country.POLAND, Country.URUGUAY);
+        MatchDoesNotExistException exception = assertThrows(MatchDoesNotExistException.class, () -> liveMatches.finishMatch(Country.GERMANY, Country.URUGUAY));
+        Match resMatch1 = liveMatches.getMatchByTeamNames(Country.POLAND, Country.EQUADOR);
+        Match resMatch2 = liveMatches.getMatchByTeamNames(Country.POLAND, Country.URUGUAY);
 
 
         //then
@@ -168,11 +164,10 @@ public class LiveMatchesTest {
         createMatch(liveMatches, Country.POLAND, Country.URUGUAY);
 
         //when
-        MatchEvent matchHomeScoreEvent = new MatchEvent(MatchEventType.HOME_TEAM_SCORES, Country.POLAND, Country.URUGUAY);
-        liveMatches.handleMatchEvent(matchHomeScoreEvent);
+        liveMatches.scoreHome(Country.POLAND, Country.URUGUAY);
 
         //then
-        Match match = liveMatches.getMatch(Country.POLAND, Country.URUGUAY);
+        Match match = liveMatches.getMatchByTeamNames(Country.POLAND, Country.URUGUAY);
         assertEquals(1, match.getHomeScore());
     }
 
@@ -185,10 +180,10 @@ public class LiveMatchesTest {
         createMatch(liveMatches, Country.POLAND, Country.URUGUAY);
 
         //when
-        repeatScoreEvent(liveMatches, 2, MatchEventType.HOME_TEAM_SCORES, Country.POLAND, Country.URUGUAY);
+        repeatScoreHomeEvent(liveMatches, 2, Country.POLAND, Country.URUGUAY);
 
         //then
-        Match match = liveMatches.getMatch(Country.POLAND, Country.URUGUAY);
+        Match match = liveMatches.getMatchByTeamNames(Country.POLAND, Country.URUGUAY);
         assertEquals(2, match.getHomeScore());
     }
 
@@ -201,11 +196,10 @@ public class LiveMatchesTest {
         createMatch(liveMatches, Country.POLAND, Country.URUGUAY);
 
         //when
-        MatchEvent matchAwayScoreEvent = new MatchEvent(MatchEventType.AWAY_TEAM_SCORES, Country.POLAND, Country.URUGUAY);
-        liveMatches.handleMatchEvent(matchAwayScoreEvent);
+        liveMatches.scoreAway(Country.POLAND, Country.URUGUAY);
 
         //then
-        Match match = liveMatches.getMatch(Country.POLAND, Country.URUGUAY);
+        Match match = liveMatches.getMatchByTeamNames(Country.POLAND, Country.URUGUAY);
         assertEquals(1, match.getAwayScore());
     }
 
@@ -218,11 +212,11 @@ public class LiveMatchesTest {
         createMatch(liveMatches, Country.POLAND, Country.URUGUAY);
 
         //when
-        repeatScoreEvent(liveMatches, 2, MatchEventType.AWAY_TEAM_SCORES, Country.POLAND, Country.URUGUAY);
+        repeatScoreAwayEvent(liveMatches, 2, Country.POLAND, Country.URUGUAY);
 
 
         //then
-        Match match = liveMatches.getMatch(Country.POLAND, Country.URUGUAY);
+        Match match = liveMatches.getMatchByTeamNames(Country.POLAND, Country.URUGUAY);
         assertEquals(2, match.getAwayScore());
     }
 
@@ -231,10 +225,9 @@ public class LiveMatchesTest {
     public void shouldThrowExceptionWhenMatchDoesNotExistOnUpdateScore() {
         //given
         LiveMatches liveMatches = new LiveMatches();
-        MatchEvent matchEvent = new MatchEvent(MatchEventType.AWAY_TEAM_SCORES, Country.POLAND, Country.URUGUAY);
 
         //when
-        MatchDoesNotExistException exception = assertThrows(MatchDoesNotExistException.class, () -> liveMatches.handleMatchEvent(matchEvent));
+        MatchDoesNotExistException exception = assertThrows(MatchDoesNotExistException.class, () -> liveMatches.scoreAway(Country.POLAND, Country.URUGUAY));
 
         //then
         assertEquals("Match does not exist", exception.getMessage());
@@ -251,12 +244,12 @@ public class LiveMatchesTest {
         createMatch(liveMatches, Country.GERMANY, Country.FRANCE);
         createMatch(liveMatches, Country.ARGENTINA, Country.AUSTRALIA);
 
-        repeatScoreEvent(liveMatches, 3, MatchEventType.HOME_TEAM_SCORES, Country.MEXICO, Country.CANADA);
+        repeatScoreHomeEvent(liveMatches, 3, Country.MEXICO, Country.CANADA);
 
-        repeatScoreEvent(liveMatches, 4, MatchEventType.AWAY_TEAM_SCORES, Country.GERMANY, Country.FRANCE);
+        repeatScoreAwayEvent(liveMatches, 4, Country.GERMANY, Country.FRANCE);
 
-        repeatScoreEvent(liveMatches, 3, MatchEventType.HOME_TEAM_SCORES, Country.ARGENTINA, Country.AUSTRALIA);
-        repeatScoreEvent(liveMatches, 3, MatchEventType.AWAY_TEAM_SCORES, Country.ARGENTINA, Country.AUSTRALIA);
+        repeatScoreHomeEvent(liveMatches, 3, Country.ARGENTINA, Country.AUSTRALIA);
+        repeatScoreAwayEvent(liveMatches, 3, Country.ARGENTINA, Country.AUSTRALIA);
 
 
         //when
@@ -324,19 +317,19 @@ public class LiveMatchesTest {
         createMatch(liveMatches, Country.URUGUAY, Country.ITALY);
         createMatch(liveMatches, Country.ARGENTINA, Country.AUSTRALIA);
 
-        repeatScoreEvent(liveMatches, 5, MatchEventType.AWAY_TEAM_SCORES, Country.MEXICO, Country.CANADA);
+        repeatScoreAwayEvent(liveMatches, 5, Country.MEXICO, Country.CANADA);
 
-        repeatScoreEvent(liveMatches, 10, MatchEventType.HOME_TEAM_SCORES, Country.SPAIN, Country.BRAZIL);
-        repeatScoreEvent(liveMatches, 2, MatchEventType.AWAY_TEAM_SCORES, Country.SPAIN, Country.BRAZIL);
+        repeatScoreHomeEvent(liveMatches, 10, Country.SPAIN, Country.BRAZIL);
+        repeatScoreHomeEvent(liveMatches, 2, Country.SPAIN, Country.BRAZIL);
 
-        repeatScoreEvent(liveMatches, 2, MatchEventType.HOME_TEAM_SCORES, Country.GERMANY, Country.FRANCE);
-        repeatScoreEvent(liveMatches, 2, MatchEventType.AWAY_TEAM_SCORES, Country.GERMANY, Country.FRANCE);
+        repeatScoreHomeEvent(liveMatches, 2, Country.GERMANY, Country.FRANCE);
+        repeatScoreAwayEvent(liveMatches, 2, Country.GERMANY, Country.FRANCE);
 
-        repeatScoreEvent(liveMatches, 6, MatchEventType.HOME_TEAM_SCORES, Country.URUGUAY, Country.ITALY);
-        repeatScoreEvent(liveMatches, 6, MatchEventType.AWAY_TEAM_SCORES, Country.URUGUAY, Country.ITALY);
+        repeatScoreHomeEvent(liveMatches, 6, Country.URUGUAY, Country.ITALY);
+        repeatScoreAwayEvent(liveMatches, 6, Country.URUGUAY, Country.ITALY);
 
-        repeatScoreEvent(liveMatches, 3, MatchEventType.HOME_TEAM_SCORES, Country.ARGENTINA, Country.AUSTRALIA);
-        repeatScoreEvent(liveMatches, 1, MatchEventType.AWAY_TEAM_SCORES, Country.ARGENTINA, Country.AUSTRALIA);
+        repeatScoreHomeEvent(liveMatches, 3, Country.ARGENTINA, Country.AUSTRALIA);
+        repeatScoreAwayEvent(liveMatches, 1, Country.ARGENTINA, Country.AUSTRALIA);
 
 
         //when
@@ -365,26 +358,26 @@ public class LiveMatchesTest {
 
 
     private static void createMatch(LiveMatches liveMatches, String home, String away) {
-        MatchEvent matchEvent = new MatchEvent(MatchEventType.MATCH_STARTED, home, away);
-        liveMatches.handleMatchEvent(matchEvent);
+        Match match = new Match(home, away);
+        liveMatches.addMatch(match);
     }
 
 
     private static void finishMatch(LiveMatches liveMatches, String home, String away) {
-        MatchEvent matchEvent = new MatchEvent(MatchEventType.MATCH_FINISHED, home, away);
-        liveMatches.handleMatchEvent(matchEvent);
+        liveMatches.finishMatch(home, away);
     }
 
 
-    private static void repeatScoreEvent(LiveMatches liveMatches, int times, MatchEventType matchEventType, String home, String away) {
+    private static void repeatScoreHomeEvent(LiveMatches liveMatches, int times, String home, String away) {
         IntStream.range(0, times).forEach(i -> {
-            MatchEvent matchEvent = new MatchEvent(matchEventType, home, away);
-            try {
-                liveMatches.handleMatchEvent(matchEvent);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            liveMatches.scoreHome(home, away);
         });
     }
 
+    private static void repeatScoreAwayEvent(LiveMatches liveMatches, int times, String home, String away) {
+        IntStream.range(0, times).forEach(i -> {
+            liveMatches.scoreHome(home, away);
+        });
+
+    }
 }
