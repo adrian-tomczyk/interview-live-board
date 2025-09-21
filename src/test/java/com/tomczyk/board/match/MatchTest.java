@@ -1,6 +1,5 @@
 package com.tomczyk.board.match;
 
-import com.tomczyk.board.match.exceptions.MatchTeamsDoNotMatchException;
 import com.tomczyk.board.utils.Country;
 import org.junit.jupiter.api.Test;
 

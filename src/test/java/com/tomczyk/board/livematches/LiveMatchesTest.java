@@ -369,15 +369,12 @@ public class LiveMatchesTest {
 
 
     private static void repeatScoreHomeEvent(LiveMatches liveMatches, int times, String home, String away) {
-        IntStream.range(0, times).forEach(i -> {
-            liveMatches.scoreHome(home, away);
-        });
+        IntStream.range(0, times).forEach(i -> liveMatches.scoreHome(home, away));
     }
 
+
     private static void repeatScoreAwayEvent(LiveMatches liveMatches, int times, String home, String away) {
-        IntStream.range(0, times).forEach(i -> {
-            liveMatches.scoreHome(home, away);
-        });
+        IntStream.range(0, times).forEach(i -> liveMatches.scoreAway(home, away));
 
     }
 }

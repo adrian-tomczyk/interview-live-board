@@ -1,7 +1,6 @@
 package com.tomczyk.board;
 
 import com.tomczyk.board.livematches.LiveMatches;
-import com.tomczyk.board.match.MatchEventType;
 
 public class Main {
     private static final String POLAND = "Poland";
@@ -16,12 +15,12 @@ public class Main {
         liveFootballWorldCupScoreBoard.startGame(POLAND, GERMANY);
         liveFootballWorldCupScoreBoard.startGame(SPAIN, FRANCE);
 
-        liveFootballWorldCupScoreBoard.passMatchEvent(POLAND, GERMANY, MatchEventType.HOME_TEAM_SCORES);
-        liveFootballWorldCupScoreBoard.passMatchEvent(POLAND, GERMANY, MatchEventType.HOME_TEAM_SCORES);
-        liveFootballWorldCupScoreBoard.passMatchEvent(POLAND, GERMANY, MatchEventType.AWAY_TEAM_SCORES);
+        liveFootballWorldCupScoreBoard.scoreHome(POLAND, GERMANY);
+        liveFootballWorldCupScoreBoard.scoreHome(POLAND, GERMANY);
+        liveFootballWorldCupScoreBoard.scoreAway(POLAND, GERMANY);
 
-        liveFootballWorldCupScoreBoard.passMatchEvent(SPAIN, FRANCE, MatchEventType.HOME_TEAM_SCORES);
-        liveFootballWorldCupScoreBoard.passMatchEvent(SPAIN, FRANCE, MatchEventType.AWAY_TEAM_SCORES);
+        liveFootballWorldCupScoreBoard.scoreHome(SPAIN, FRANCE);
+        liveFootballWorldCupScoreBoard.scoreAway(SPAIN, FRANCE);
 
         System.out.println(liveFootballWorldCupScoreBoard.getScoreBoard());
 

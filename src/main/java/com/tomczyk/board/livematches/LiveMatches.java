@@ -1,152 +1,82 @@
 package com.tomczyk.board.livematches;
 
 import com.tomczyk.board.match.Match;
-import com.tomczyk.board.match.MatchEvent;
-import com.tomczyk.board.match.exceptions.MatchAlreadyExistsException;
-import com.tomczyk.board.match.exceptions.MatchDoesNotExistException;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class LiveMatches {
-    private final ArrayList<MatchWrapper> matches;
-    private Integer matchesAddedCounter;
+    private final ArrayList<Match> matches;
 
 
     public LiveMatches() {
         matches = new ArrayList<>();
-        matchesAddedCounter = 0;
     }
 
 
-    public void handleMatchEvent(MatchEvent matchEvent) {
-        switch (matchEvent.matchEventType()) {
-            case MATCH_STARTED -> addMatch(matchEvent);
-            case MATCH_FINISHED -> finishMatch(matchEvent);
-            default -> passMatchEvent(matchEvent);
-        }
-    }
-
-
-    public List<Match> getCurrentMatches() {
-        return matches.stream().map(MatchWrapper::match).toList();
-    }
-
-
-    public Match getMatch(String home, String away) {
-        MatchWrapper matchWrapper = getOrderedMatchAdapter(home, away);
-        if (matchWrapper == null) return null;
-
-        return getOrderedMatchAdapter(home, away).match();
-    }
-
-
-    private void passMatchEvent(MatchEvent matchEvent) {
-        MatchWrapper matchWrapper = getOrderedMatchAdapter(matchEvent.home(), matchEvent.away());
-
-        throwIfMatchDoesNotExist(matchWrapper);
-
-        matchWrapper.match().handleMatchEvent(matchEvent);
-
-        updateMatchPosition(matchWrapper);
-    }
-
-
-    private void addMatch(MatchEvent matchEvent) {
-        MatchWrapper existingMatch = getOrderedMatchAdapter(matchEvent.home(), matchEvent.away());
-
-        throwIfMatchAlreadyExists(existingMatch);
-
-        Match match = new Match(matchEvent.home(), matchEvent.away());
-        MatchWrapper matchWrapper = new MatchWrapper(match, matchesAddedCounter);
-
-        matches.addLast(matchWrapper);
-        matchesAddedCounter++;
-    }
-
-
-    private void finishMatch(MatchEvent matchEvent) {
-        MatchWrapper matchWrapper = getOrderedMatchAdapter(matchEvent.home(), matchEvent.away());
-
-        throwIfMatchDoesNotExist(matchWrapper);
-
-        matches.remove(matchWrapper);
-    }
-
-
-    private boolean areTeamsEqual(MatchWrapper matchWrapper, String home, String away) {
-        return matchWrapper.match().getHomeName().equals(home) && matchWrapper.match().getAwayName().equals(away);
-    }
-
-
-    private MatchWrapper getOrderedMatchAdapter(String home, String away) {
+    public Match getMatchByTeamNames(String home, String away) {
         return matches.stream()
-                .filter(match -> areTeamsEqual(match, home, away))
+                .filter(match -> MatchComparators.areTeamsEqual(match, home, away))
                 .findFirst()
                 .orElse(null);
     }
 
 
-    private void updateMatchPosition(MatchWrapper matchWrapper) {
-        int insertionIndex = findInsertionIndexAfterUpdate(matchWrapper);
+    public void addMatch(Match match) {
+        Match existingMatch = getMatchByTeamNames(match.getHomeName(), match.getAwayName());
 
-        matches.remove(matchWrapper);
-        matches.add(insertionIndex, matchWrapper);
+        MatchListVerifications.throwIfMatchAlreadyExists(existingMatch);
+
+        matches.addLast(match);
     }
 
 
-    private int findInsertionIndexAfterUpdate(MatchWrapper matchWrapper) {
-        int currentIndex = matches.indexOf(matchWrapper);
-        if (currentIndex == 0) return 0;
+    public void finishMatch(String home, String away) {
+        Match match = getMatchByTeamNames(home, away);
 
-        for (int i = currentIndex - 1; i >= 0; --i) {
-            MatchWrapper matchAtIndex = matches.get(i);
+        MatchListVerifications.throwIfMatchDoesNotExist(match);
 
-            if (shouldMatchBeInsertedAtPosition(matchWrapper, matchAtIndex)) return i;
-        }
-
-        return currentIndex;
+        matches.remove(match);
     }
 
 
-    private static boolean shouldMatchBeInsertedAtPosition(MatchWrapper matchWrapper, MatchWrapper matchAtIndex) {
-        return isScoreSumHigher(matchWrapper, matchAtIndex) ||
-                (isScoreSumEqual(matchWrapper, matchAtIndex) && wasCreatedLater(matchWrapper, matchAtIndex));
+    public void scoreHome(String home, String away) {
+        Match match = getMatchByTeamNames(home, away);
+
+        MatchListVerifications.throwIfMatchDoesNotExist(match);
+
+        match.scoreHome();
+
+        sortMatches();
     }
 
 
-    private static boolean wasCreatedLater(MatchWrapper matchWrapper, MatchWrapper matchAtIndex) {
-        return matchAtIndex.order() < matchWrapper.order();
+    public void scoreAway(String home, String away) {
+        Match match = getMatchByTeamNames(home, away);
+
+        MatchListVerifications.throwIfMatchDoesNotExist(match);
+
+        match.scoreAway();
+
+        sortMatches();
     }
 
 
-    private static boolean isScoreSumEqual(MatchWrapper matchWrapper, MatchWrapper matchAtIndex) {
-        return getOrderedMatchAdapterScoreSum(matchAtIndex) == getOrderedMatchAdapterScoreSum(matchWrapper);
+    public List<Match> getCurrentMatches() {
+        return matches;
     }
 
 
-    private static boolean isScoreSumHigher(MatchWrapper matchWrapper, MatchWrapper matchAtIndex) {
-        return getOrderedMatchAdapterScoreSum(matchAtIndex) < getOrderedMatchAdapterScoreSum(matchWrapper);
+    private void sortMatches() {
+        matches.sort((match1, match2) -> {
+            if (MatchComparators.isScoreSumLower(match1, match2)) return 1;
+            if (MatchComparators.isScoreSumEqual(match1, match2) && MatchComparators.wasCreatedLater(match1, match2))
+                return 1;
+
+            return -1;
+        });
     }
 
-
-    private static int getOrderedMatchAdapterScoreSum(MatchWrapper matchWrapper) {
-        return matchWrapper.match().getHomeScore() + matchWrapper.match().getAwayScore();
-    }
-
-
-    private static void throwIfMatchDoesNotExist(MatchWrapper matchWrapper) {
-        if (matchWrapper == null) {
-            throw new MatchDoesNotExistException();
-        }
-    }
-
-
-    private static void throwIfMatchAlreadyExists(MatchWrapper existingMatch) {
-        if (existingMatch != null) {
-            throw new MatchAlreadyExistsException();
-        }
-    }
 }
 
 

@@ -1,7 +1,6 @@
 package com.tomczyk.board.match;
 
-import com.tomczyk.board.match.exceptions.MatchTeamsDoNotMatchException;
-
+import java.util.Date;
 import java.util.Objects;
 
 public class Match {
@@ -9,12 +8,15 @@ public class Match {
     private Integer awayScore;
     private final String homeName;
     private final String awayName;
+    private final Date creationDate;
+
 
     public Match(String home, String away) {
         homeName = home;
         awayName = away;
         homeScore = 0;
         awayScore = 0;
+        creationDate = new Date();
     }
 
 
@@ -53,14 +55,8 @@ public class Match {
     }
 
 
-    public void handleMatchEvent(MatchEvent matchEvent) {
-        throwIfEventTeamsDoesNotEqual(matchEvent);
-
-        switch (matchEvent.matchEventType()) {
-            case HOME_TEAM_SCORES -> scoreHome();
-            case AWAY_TEAM_SCORES -> scoreAway();
-            default -> System.out.println("Unexpected event type: " + matchEvent.matchEventType().name());
-        }
+    public Date getCreationDate() {
+        return creationDate;
     }
 
 
@@ -76,16 +72,5 @@ public class Match {
         return Objects.hash(homeScore, awayScore, homeName, awayName);
     }
 
-
-    private boolean areEventTeamsEqual(MatchEvent matchEvent) {
-        return homeName.equals(matchEvent.home()) && awayName.equals(matchEvent.away());
-    }
-
-
-    private void throwIfEventTeamsDoesNotEqual(MatchEvent matchEvent) {
-        if (!areEventTeamsEqual(matchEvent)) {
-            throw new MatchTeamsDoNotMatchException();
-        }
-    }
 
 }

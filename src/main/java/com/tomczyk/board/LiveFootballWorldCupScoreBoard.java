@@ -2,8 +2,6 @@ package com.tomczyk.board;
 
 import com.tomczyk.board.livematches.LiveMatches;
 import com.tomczyk.board.match.Match;
-import com.tomczyk.board.match.MatchEvent;
-import com.tomczyk.board.match.MatchEventType;
 
 public class LiveFootballWorldCupScoreBoard {
     private final LiveMatches liveMatches;
@@ -14,18 +12,26 @@ public class LiveFootballWorldCupScoreBoard {
 
 
     public void startGame(String home, String away) {
-        liveMatches.handleMatchEvent(new MatchEvent(MatchEventType.MATCH_STARTED, home, away));
+        Match match = new Match(home, away);
+
+        liveMatches.addMatch(match);
     }
 
 
     public void finishGame(String home, String away) {
-        liveMatches.handleMatchEvent(new MatchEvent(MatchEventType.MATCH_FINISHED, home, away));
+        liveMatches.finishMatch(home, away);
     }
 
 
-    public void passMatchEvent(String home, String away, MatchEventType matchEventType) {
-        liveMatches.handleMatchEvent(new MatchEvent(matchEventType, home, away));
+    public void scoreHome(String home, String away) {
+        liveMatches.scoreHome(home, away);
     }
+
+
+    public void scoreAway(String home, String away) {
+        liveMatches.scoreAway(home, away);
+    }
+
 
     public String getScoreBoard() {
         return liveMatches.getCurrentMatches().stream()
@@ -33,4 +39,6 @@ public class LiveFootballWorldCupScoreBoard {
                 .reduce("", (partialString, element) -> partialString + element + "\n")
                 .stripTrailing();
     }
+
+
 }
