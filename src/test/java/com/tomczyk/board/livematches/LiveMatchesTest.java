@@ -1,5 +1,7 @@
 package com.tomczyk.board.livematches;
 
+import com.tomczyk.board.match.exceptions.MatchAlreadyExistsException;
+import com.tomczyk.board.match.exceptions.MatchDoesNotExistException;
 import com.tomczyk.board.utils.Country;
 import com.tomczyk.board.match.Match;
 import com.tomczyk.board.match.MatchEvent;
@@ -24,7 +26,7 @@ public class LiveMatchesTest {
 
 
     @Test
-    public void shouldAddMatchToList() throws Exception {
+    public void shouldAddMatchToList() {
         //given
         LiveMatches liveMatches = new LiveMatches();
 
@@ -37,14 +39,14 @@ public class LiveMatchesTest {
 
 
     @Test
-    public void shouldThrowExceptionWhenMatchAlreadyExists() throws Exception {
+    public void shouldThrowExceptionWhenMatchAlreadyExists() {
         //given
         LiveMatches liveMatches = new LiveMatches();
         createMatch(liveMatches, Country.POLAND, Country.URUGUAY);
 
 
         //when
-        Exception exception = assertThrows(Exception.class, () -> createMatch(liveMatches, Country.POLAND, Country.URUGUAY));
+        MatchAlreadyExistsException exception = assertThrows(MatchAlreadyExistsException.class, () -> createMatch(liveMatches, Country.POLAND, Country.URUGUAY));
 
         //then
         assertEquals("Match already exists", exception.getMessage());
@@ -53,7 +55,7 @@ public class LiveMatchesTest {
 
 
     @Test
-    public void shouldAddMultipleMatchesToList() throws Exception {
+    public void shouldAddMultipleMatchesToList() {
         //given
         LiveMatches liveMatches = new LiveMatches();
 
@@ -67,7 +69,7 @@ public class LiveMatchesTest {
 
 
     @Test
-    public void shouldGetAddedMatch() throws Exception {
+    public void shouldGetAddedMatch() {
         //given
         LiveMatches liveMatches = new LiveMatches();
         createMatch(liveMatches, Country.POLAND, Country.URUGUAY);
@@ -82,7 +84,7 @@ public class LiveMatchesTest {
 
 
     @Test
-    public void shouldNotGetAddedMatchWhenDoesNotExists() {
+    public void shouldNotReturnAddedMatchWhenDoesNotExists() {
         //given
         LiveMatches liveMatches = new LiveMatches();
 
@@ -95,7 +97,7 @@ public class LiveMatchesTest {
 
 
     @Test
-    public void shouldFinishMatch() throws Exception {
+    public void shouldFinishMatch() {
         //given
         LiveMatches liveMatches = new LiveMatches();
         createMatch(liveMatches, Country.POLAND, Country.URUGUAY);
@@ -110,7 +112,7 @@ public class LiveMatchesTest {
 
 
     @Test
-    public void shouldFinishOnlyMatchingMatch() throws Exception {
+    public void shouldFinishOnlyMatchingMatch() {
         //given
         LiveMatches liveMatches = new LiveMatches();
         createMatch(liveMatches, Country.POLAND, Country.EQUADOR);
@@ -134,7 +136,7 @@ public class LiveMatchesTest {
 
 
     @Test
-    public void shouldThrowExceptionWhenFinishingNotExistingMatch() throws Exception {
+    public void shouldThrowExceptionWhenFinishingNotExistingMatch() {
         //given
         LiveMatches liveMatches = new LiveMatches();
 
@@ -144,13 +146,13 @@ public class LiveMatchesTest {
         MatchEvent finishMatchEvent1 = new MatchEvent(MatchEventType.MATCH_FINISHED, Country.GERMANY, Country.URUGUAY);
 
         //when
-        Exception exception = assertThrows(Exception.class, () -> liveMatches.handleMatchEvent(finishMatchEvent1));
+        MatchDoesNotExistException exception = assertThrows(MatchDoesNotExistException.class, () -> liveMatches.handleMatchEvent(finishMatchEvent1));
         Match resMatch1 = liveMatches.getMatch(Country.POLAND, Country.EQUADOR);
         Match resMatch2 = liveMatches.getMatch(Country.POLAND, Country.URUGUAY);
 
 
         //then
-        assertEquals("Match does not exists", exception.getMessage());
+        assertEquals("Match does not exist", exception.getMessage());
         assertEquals(Country.POLAND, resMatch1.getHomeName());
         assertEquals(Country.EQUADOR, resMatch1.getAwayName());
         assertEquals(Country.POLAND, resMatch2.getHomeName());
@@ -159,7 +161,7 @@ public class LiveMatchesTest {
 
 
     @Test
-    public void shouldUpdateMatchHomeScore() throws Exception {
+    public void shouldUpdateMatchHomeScore() {
         //given
         LiveMatches liveMatches = new LiveMatches();
 
@@ -176,7 +178,7 @@ public class LiveMatchesTest {
 
 
     @Test
-    public void shouldUpdateMatchHomeScoreTwice() throws Exception {
+    public void shouldUpdateMatchHomeScoreTwice() {
         //given
         LiveMatches liveMatches = new LiveMatches();
 
@@ -192,7 +194,7 @@ public class LiveMatchesTest {
 
 
     @Test
-    public void shouldUpdateMatchAwayScore() throws Exception {
+    public void shouldUpdateMatchAwayScore() {
         //given
         LiveMatches liveMatches = new LiveMatches();
 
@@ -209,7 +211,7 @@ public class LiveMatchesTest {
 
 
     @Test
-    public void shouldUpdateMatchAwayScoreTwice() throws Exception {
+    public void shouldUpdateMatchAwayScoreTwice() {
         //given
         LiveMatches liveMatches = new LiveMatches();
 
@@ -226,21 +228,21 @@ public class LiveMatchesTest {
 
 
     @Test
-    public void shouldThrowExceptionWhenMatchDoesNotExistsOnUpdateScore() {
+    public void shouldThrowExceptionWhenMatchDoesNotExistOnUpdateScore() {
         //given
         LiveMatches liveMatches = new LiveMatches();
         MatchEvent matchEvent = new MatchEvent(MatchEventType.AWAY_TEAM_SCORES, Country.POLAND, Country.URUGUAY);
 
         //when
-        Exception exception = assertThrows(Exception.class, () -> liveMatches.handleMatchEvent(matchEvent));
+        MatchDoesNotExistException exception = assertThrows(MatchDoesNotExistException.class, () -> liveMatches.handleMatchEvent(matchEvent));
 
         //then
-        assertEquals("Match does not exists", exception.getMessage());
+        assertEquals("Match does not exist", exception.getMessage());
     }
 
 
     @Test
-    public void shouldOrderMatchesByHighestScoreSum() throws Exception {
+    public void shouldOrderMatchesByHighestScoreSum() {
         //given
         LiveMatches liveMatches = new LiveMatches();
 
@@ -280,7 +282,7 @@ public class LiveMatchesTest {
 
 
     @Test
-    public void shouldOrderMatchesByStartEvent() throws Exception {
+    public void shouldOrderMatchesByStartEvent() {
         //given
         LiveMatches liveMatches = new LiveMatches();
 
@@ -312,7 +314,7 @@ public class LiveMatchesTest {
 
 
     @Test
-    public void shouldOrderMatchesByScoreAndThenStartEvent() throws Exception {
+    public void shouldOrderMatchesByScoreAndThenStartEvent() {
         //given
         LiveMatches liveMatches = new LiveMatches();
 
@@ -344,7 +346,6 @@ public class LiveMatchesTest {
         Match match4 = liveMatches.getCurrentMatches().get(3);
         Match match5 = liveMatches.getCurrentMatches().get(4);
 
-        System.out.println(liveMatches.getCurrentMatches());
         //then
         assertEquals(Country.URUGUAY, match1.getHomeName());
         assertEquals(Country.ITALY, match1.getAwayName());
@@ -363,13 +364,13 @@ public class LiveMatchesTest {
     }
 
 
-    private static void createMatch(LiveMatches liveMatches, String home, String away) throws Exception {
+    private static void createMatch(LiveMatches liveMatches, String home, String away) {
         MatchEvent matchEvent = new MatchEvent(MatchEventType.MATCH_STARTED, home, away);
         liveMatches.handleMatchEvent(matchEvent);
     }
 
 
-    private static void finishMatch(LiveMatches liveMatches, String home, String away) throws Exception {
+    private static void finishMatch(LiveMatches liveMatches, String home, String away) {
         MatchEvent matchEvent = new MatchEvent(MatchEventType.MATCH_FINISHED, home, away);
         liveMatches.handleMatchEvent(matchEvent);
     }

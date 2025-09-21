@@ -1,5 +1,7 @@
 package com.tomczyk.board.match;
 
+import com.tomczyk.board.match.exceptions.MatchTeamsDoNotMatchException;
+
 import java.util.Objects;
 
 public class Match {
@@ -51,7 +53,7 @@ public class Match {
     }
 
 
-    public void handleMatchEvent(MatchEvent matchEvent) throws Exception {
+    public void handleMatchEvent(MatchEvent matchEvent) {
         throwIfEventTeamsDoesNotEqual(matchEvent);
 
         switch (matchEvent.matchEventType()) {
@@ -80,9 +82,9 @@ public class Match {
     }
 
 
-    private void throwIfEventTeamsDoesNotEqual(MatchEvent matchEvent) throws Exception {
+    private void throwIfEventTeamsDoesNotEqual(MatchEvent matchEvent) {
         if (!areEventTeamsEqual(matchEvent)) {
-            throw new Exception("Match teams do not match");
+            throw new MatchTeamsDoNotMatchException();
         }
     }
 

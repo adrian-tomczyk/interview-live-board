@@ -2,12 +2,14 @@ package com.tomczyk.board.livematches;
 
 import com.tomczyk.board.match.Match;
 import com.tomczyk.board.match.MatchEvent;
+import com.tomczyk.board.match.exceptions.MatchAlreadyExistsException;
+import com.tomczyk.board.match.exceptions.MatchDoesNotExistException;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class LiveMatches {
-    private final ArrayList<OrderedMatchAdapter> matches;
+    private final ArrayList<MatchWrapper> matches;
     private Integer matchesAddedCounter;
 
 
@@ -17,69 +19,67 @@ public class LiveMatches {
     }
 
 
-    public void handleMatchEvent(MatchEvent matchEvent) throws Exception {
-        passMatchEvent(matchEvent);
-
+    public void handleMatchEvent(MatchEvent matchEvent) {
         switch (matchEvent.matchEventType()) {
             case MATCH_STARTED -> addMatch(matchEvent);
             case MATCH_FINISHED -> finishMatch(matchEvent);
+            default -> passMatchEvent(matchEvent);
         }
     }
 
 
     public List<Match> getCurrentMatches() {
-        return matches.stream().map(OrderedMatchAdapter::match).toList();
+        return matches.stream().map(MatchWrapper::match).toList();
     }
 
 
     public Match getMatch(String home, String away) {
-        OrderedMatchAdapter orderedMatchAdapter = getOrderedMatchAdapter(home, away);
-        if (orderedMatchAdapter == null) return null;
+        MatchWrapper matchWrapper = getOrderedMatchAdapter(home, away);
+        if (matchWrapper == null) return null;
 
         return getOrderedMatchAdapter(home, away).match();
     }
 
 
-    private void passMatchEvent(MatchEvent matchEvent) throws Exception {
-        OrderedMatchAdapter orderedMatchAdapter = getOrderedMatchAdapter(matchEvent.home(), matchEvent.away());
+    private void passMatchEvent(MatchEvent matchEvent) {
+        MatchWrapper matchWrapper = getOrderedMatchAdapter(matchEvent.home(), matchEvent.away());
 
-        throwIfMatchDoesNotExists(orderedMatchAdapter);
+        throwIfMatchDoesNotExist(matchWrapper);
 
-        orderedMatchAdapter.match().handleMatchEvent(matchEvent);
+        matchWrapper.match().handleMatchEvent(matchEvent);
 
-        updateMatchPosition(orderedMatchAdapter);
+        updateMatchPosition(matchWrapper);
     }
 
 
-    private void addMatch(MatchEvent matchEvent) throws Exception {
-        OrderedMatchAdapter existingMatch = getOrderedMatchAdapter(matchEvent.home(), matchEvent.away());
+    private void addMatch(MatchEvent matchEvent) {
+        MatchWrapper existingMatch = getOrderedMatchAdapter(matchEvent.home(), matchEvent.away());
 
         throwIfMatchAlreadyExists(existingMatch);
 
         Match match = new Match(matchEvent.home(), matchEvent.away());
+        MatchWrapper matchWrapper = new MatchWrapper(match, matchesAddedCounter);
 
-        OrderedMatchAdapter orderedMatchAdapter = new OrderedMatchAdapter(match, matchesAddedCounter);
-
-        matches.addLast(orderedMatchAdapter);
+        matches.addLast(matchWrapper);
         matchesAddedCounter++;
     }
 
 
-    private void finishMatch(MatchEvent matchEvent) throws Exception {
-        OrderedMatchAdapter orderedMatchAdapter = getOrderedMatchAdapter(matchEvent.home(), matchEvent.away());
+    private void finishMatch(MatchEvent matchEvent) {
+        MatchWrapper matchWrapper = getOrderedMatchAdapter(matchEvent.home(), matchEvent.away());
 
-        throwIfMatchDoesNotExists(orderedMatchAdapter);
+        throwIfMatchDoesNotExist(matchWrapper);
 
-        matches.remove(orderedMatchAdapter);
+        matches.remove(matchWrapper);
     }
 
 
-    private boolean areTeamsEqual(OrderedMatchAdapter orderedMatchAdapter, String home, String away) {
-        return orderedMatchAdapter.match().getHomeName().equals(home) && orderedMatchAdapter.match().getAwayName().equals(away);
+    private boolean areTeamsEqual(MatchWrapper matchWrapper, String home, String away) {
+        return matchWrapper.match().getHomeName().equals(home) && matchWrapper.match().getAwayName().equals(away);
     }
 
 
-    private OrderedMatchAdapter getOrderedMatchAdapter(String home, String away) {
+    private MatchWrapper getOrderedMatchAdapter(String home, String away) {
         return matches.stream()
                 .filter(match -> areTeamsEqual(match, home, away))
                 .findFirst()
@@ -87,64 +87,64 @@ public class LiveMatches {
     }
 
 
-    private void updateMatchPosition(OrderedMatchAdapter orderedMatchAdapter) {
-        int insertionIndex = findInsertionIndexAfterUpdate(orderedMatchAdapter);
+    private void updateMatchPosition(MatchWrapper matchWrapper) {
+        int insertionIndex = findInsertionIndexAfterUpdate(matchWrapper);
 
-        matches.remove(orderedMatchAdapter);
-        matches.add(insertionIndex, orderedMatchAdapter);
+        matches.remove(matchWrapper);
+        matches.add(insertionIndex, matchWrapper);
     }
 
 
-    private int findInsertionIndexAfterUpdate(OrderedMatchAdapter orderedMatchAdapter) {
-        int currentIndex = matches.indexOf(orderedMatchAdapter);
+    private int findInsertionIndexAfterUpdate(MatchWrapper matchWrapper) {
+        int currentIndex = matches.indexOf(matchWrapper);
         if (currentIndex == 0) return 0;
 
         for (int i = currentIndex - 1; i >= 0; --i) {
-            OrderedMatchAdapter matchAtIndex = matches.get(i);
+            MatchWrapper matchAtIndex = matches.get(i);
 
-            if (shouldMatchBeInsertedAtPosition(orderedMatchAdapter, matchAtIndex)) return i;
+            if (shouldMatchBeInsertedAtPosition(matchWrapper, matchAtIndex)) return i;
         }
 
         return currentIndex;
     }
 
 
-    private static boolean shouldMatchBeInsertedAtPosition(OrderedMatchAdapter orderedMatchAdapter, OrderedMatchAdapter matchAtIndex) {
-        return isScoreSumHigher(orderedMatchAdapter, matchAtIndex) ||
-                (isScoreSumEqual(orderedMatchAdapter, matchAtIndex) && wasCreatedLater(orderedMatchAdapter, matchAtIndex));
+    private static boolean shouldMatchBeInsertedAtPosition(MatchWrapper matchWrapper, MatchWrapper matchAtIndex) {
+        return isScoreSumHigher(matchWrapper, matchAtIndex) ||
+                (isScoreSumEqual(matchWrapper, matchAtIndex) && wasCreatedLater(matchWrapper, matchAtIndex));
     }
 
 
-    private static boolean wasCreatedLater(OrderedMatchAdapter orderedMatchAdapter, OrderedMatchAdapter matchAtIndex) {
-        return matchAtIndex.order() < orderedMatchAdapter.order();
+    private static boolean wasCreatedLater(MatchWrapper matchWrapper, MatchWrapper matchAtIndex) {
+        return matchAtIndex.order() < matchWrapper.order();
     }
 
 
-    private static boolean isScoreSumEqual(OrderedMatchAdapter orderedMatchAdapter, OrderedMatchAdapter matchAtIndex) {
-        return getOrderedMatchAdapterScoreSum(matchAtIndex) == getOrderedMatchAdapterScoreSum(orderedMatchAdapter);
+    private static boolean isScoreSumEqual(MatchWrapper matchWrapper, MatchWrapper matchAtIndex) {
+        return getOrderedMatchAdapterScoreSum(matchAtIndex) == getOrderedMatchAdapterScoreSum(matchWrapper);
     }
 
 
-    private static boolean isScoreSumHigher(OrderedMatchAdapter orderedMatchAdapter, OrderedMatchAdapter matchAtIndex) {
-        return getOrderedMatchAdapterScoreSum(matchAtIndex) < getOrderedMatchAdapterScoreSum(orderedMatchAdapter);
+    private static boolean isScoreSumHigher(MatchWrapper matchWrapper, MatchWrapper matchAtIndex) {
+        return getOrderedMatchAdapterScoreSum(matchAtIndex) < getOrderedMatchAdapterScoreSum(matchWrapper);
     }
 
 
-    private static int getOrderedMatchAdapterScoreSum(OrderedMatchAdapter orderedMatchAdapter) {
-        return orderedMatchAdapter.match().getHomeScore() + orderedMatchAdapter.match().getAwayScore();
+    private static int getOrderedMatchAdapterScoreSum(MatchWrapper matchWrapper) {
+        return matchWrapper.match().getHomeScore() + matchWrapper.match().getAwayScore();
     }
 
 
-    private static void throwIfMatchDoesNotExists(OrderedMatchAdapter orderedMatchAdapter) throws Exception {
-        if (orderedMatchAdapter == null) {
-            throw new Exception("Match does not exists");
+    private static void throwIfMatchDoesNotExist(MatchWrapper matchWrapper) {
+        if (matchWrapper == null) {
+            throw new MatchDoesNotExistException();
         }
     }
 
 
-    private static void throwIfMatchAlreadyExists(OrderedMatchAdapter existingMatch) throws Exception {
+    private static void throwIfMatchAlreadyExists(MatchWrapper existingMatch) {
         if (existingMatch != null) {
-            throw new Exception("Match already exists");
+            throw new MatchAlreadyExistsException();
         }
     }
 }

@@ -9,7 +9,7 @@ public class Main {
     private static final String SPAIN = "Spain";
     private static final String FRANCE = "France";
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         LiveMatches liveMatches = new LiveMatches();
         LiveFootballWorldCupScoreBoard liveFootballWorldCupScoreBoard = new LiveFootballWorldCupScoreBoard(liveMatches);
 

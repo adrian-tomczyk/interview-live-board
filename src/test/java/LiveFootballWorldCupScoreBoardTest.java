@@ -31,7 +31,7 @@ public class LiveFootballWorldCupScoreBoardTest {
 
 
     @Test
-    public void shouldStartAGame() throws Exception {
+    public void shouldStartAGame() {
         //given
 
         //when
@@ -47,7 +47,7 @@ public class LiveFootballWorldCupScoreBoardTest {
 
 
     @Test
-    public void shouldFinishAGame() throws Exception {
+    public void shouldFinishAGame() {
         //given
         liveFootballWorldCupScoreBoard.startGame(Country.POLAND, Country.URUGUAY);
 
@@ -64,7 +64,7 @@ public class LiveFootballWorldCupScoreBoardTest {
 
 
     @Test
-    public void shouldUpdateHomeScore() throws Exception {
+    public void shouldUpdateHomeScore() {
         //given
         liveFootballWorldCupScoreBoard.startGame(Country.POLAND, Country.URUGUAY);
 
@@ -81,7 +81,7 @@ public class LiveFootballWorldCupScoreBoardTest {
 
 
     @Test
-    public void shouldUpdateAwayScore() throws Exception {
+    public void shouldUpdateAwayScore() {
         //given
         liveFootballWorldCupScoreBoard.startGame(Country.POLAND, Country.URUGUAY);
 

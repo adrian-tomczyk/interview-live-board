@@ -1,9 +1,11 @@
 package com.tomczyk.board.match;
 
+import com.tomczyk.board.match.exceptions.MatchTeamsDoNotMatchException;
 import com.tomczyk.board.utils.Country;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 
 public class MatchTest {
 
@@ -20,7 +22,7 @@ public class MatchTest {
 
 
     @Test
-    void shouldUpdateHomeScore() throws Exception {
+    void shouldUpdateHomeScore() {
         //given
         Match match = new Match(Country.MEXICO, Country.CANADA);
         MatchEvent matchEvent = new MatchEvent(MatchEventType.HOME_TEAM_SCORES, Country.MEXICO, Country.CANADA);
@@ -34,7 +36,7 @@ public class MatchTest {
 
 
     @Test
-    void shouldUpdateAwayScore() throws Exception {
+    void shouldUpdateAwayScore() {
         //given
         Match match = new Match(Country.MEXICO, Country.CANADA);
         MatchEvent matchEvent = new MatchEvent(MatchEventType.AWAY_TEAM_SCORES, Country.MEXICO, Country.CANADA);
@@ -54,7 +56,7 @@ public class MatchTest {
         MatchEvent matchEvent = new MatchEvent(MatchEventType.AWAY_TEAM_SCORES, Country.POLAND, Country.CANADA);
 
         //when
-        Exception exception = assertThrows(Exception.class, () -> match.handleMatchEvent(matchEvent));
+        MatchTeamsDoNotMatchException exception = assertThrows(MatchTeamsDoNotMatchException.class, () -> match.handleMatchEvent(matchEvent));
 
         //then
         assertEquals("Match teams do not match", exception.getMessage());
@@ -68,7 +70,7 @@ public class MatchTest {
         MatchEvent matchEvent = new MatchEvent(MatchEventType.AWAY_TEAM_SCORES, Country.MEXICO, Country.POLAND);
 
         //when
-        Exception exception = assertThrows(Exception.class, () -> match.handleMatchEvent(matchEvent));
+        MatchTeamsDoNotMatchException exception = assertThrows(MatchTeamsDoNotMatchException.class, () -> match.handleMatchEvent(matchEvent));
 
         //then
         assertEquals("Match teams do not match", exception.getMessage());
