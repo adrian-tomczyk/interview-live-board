@@ -27,11 +27,11 @@ public class Match {
         awayScore++;
     }
 
-    public String getHomeName(){
+    public String getHomeName() {
         return homeName;
     }
 
-    public String getAwayName(){
+    public String getAwayName() {
         return awayName;
     }
 
